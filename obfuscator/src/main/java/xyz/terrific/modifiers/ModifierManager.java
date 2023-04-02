@@ -38,7 +38,7 @@ public class ModifierManager {
         ModifierManager.getModifiers().forEach(modifier -> {
             try {
                 if (ModifierManager.getShouldLog()) {
-                    Logger.getInstance().info(ClassObfuscator.class, "Running " + modifier.getSimpleName());
+                    Logger.getInstance().info(ClassObfuscator.class, "Running " + modifier.getSimpleName() + " on " + classgen.getFileName());
                 }
                 modifier.getConstructor(ClassGen.class, Boolean.class)
                         .newInstance(classgen, false)

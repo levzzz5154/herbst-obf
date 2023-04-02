@@ -4,12 +4,10 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.ClassGen;
 import xyz.terrific.modifiers.ModifierManager;
-import xyz.terrific.util.FileUtils;
 import xyz.terrific.util.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 public class ClassObfuscator {
     private final File classfile;
@@ -26,20 +24,11 @@ public class ClassObfuscator {
 
             ModifierManager.runModifiers(gen);
 
-            File originalfile = new File(classfile.getName().replace(".class", "_bak.class"));
-            String originalContent = FileUtils.readFile(classfile);
-            if (originalContent == null) {
-                Logger.getInstance().warning("Failed to read contents of original class file");
-            }
-
-            PrintWriter writer = new PrintWriter(originalfile);
-            writer.write(originalContent == null ? "<null>" : originalContent);
-            writer.flush();
-            writer.close();
-
-            gen.getJavaClass().dump(classfile);
+            File obfuscatedFile = new File(classfile.getName().replace(".class", ".obf.class"));
+            Logger.getInstance().info("Saving obfuscated class file to '" + obfuscatedFile.getName() + "'");
+            gen.getJavaClass().dump(obfuscatedFile);
         } catch (IOException e) {
-            Logger.getInstance().error("Failed to parse class file: '" + classfile.getName() + "' - " + e.getMessage());
+            Logger.getInstance().error("Failed to parse (or failed to save) class file: '" + classfile.getName() + "' - " + e.getMessage());
         }
     }
 }

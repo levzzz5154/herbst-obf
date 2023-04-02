@@ -35,17 +35,19 @@ public class JarObfuscator {
     }
 
     public void obfuscate() {
-        Enumeration<JarEntry> e_entries = jarfile.entries();
         try {
+            Enumeration<JarEntry> e_entries = jarfile.entries();
             JarOutputStream out = new JarOutputStream(Files.newOutputStream(Paths.get(jarfile.getName().replace(".jar", ".obf.jar"))));
             while (e_entries.hasMoreElements()) {
                 JarEntry entry = e_entries.nextElement();
                 JarEntry newEntry = new JarEntry(entry.getName());
+
                 if (entry.getName().endsWith(".class")) {
                     ClassParser parser = new ClassParser(jarfile.getInputStream(entry), entry.getName());
                     JavaClass javaclass = parser.parse();
                     Repository.addClass(javaclass);
                     ClassGen gen = new ClassGen(javaclass);
+
                     entries.add(newEntry);
                     classes.add(gen);
                 } else {
@@ -64,7 +66,6 @@ public class JarObfuscator {
             }
 
 
-//            classes.forEach(ModifierManager::runModifiers);
             classes.forEach(gen -> {
                 ModifierManager.runModifiers(gen);
 
@@ -75,6 +76,10 @@ public class JarObfuscator {
                     out.write(gen.getJavaClass().getBytes());
                     out.flush();
                     out.closeEntry();
+
+                    if (ModifierManager.getShouldLog()) {
+                        Logger.getInstance().info(JarObfuscator.class, String.format("Saved obfuscated entry '%s'", name));
+                    }
                 } catch (IOException e) {
                     Logger.getInstance().error("Failed to call putNextEntry on 'out' - " + e.getMessage());
                 }
