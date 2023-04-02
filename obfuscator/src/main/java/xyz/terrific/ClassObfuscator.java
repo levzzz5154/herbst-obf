@@ -28,7 +28,7 @@ public class ClassObfuscator {
             Logger.getInstance().info("Saving obfuscated class file to '" + obfuscatedFile.getName() + "'");
             gen.getJavaClass().dump(obfuscatedFile);
         } catch (IOException e) {
-            Logger.getInstance().error("Failed to parse (or failed to save) class file: '" + classfile.getName() + "' - " + e.getMessage());
+            Logger.getInstance().error((Object) "Failed to parse (or failed to save) class file: '%s' - %s", classfile.getName(), e.getMessage());
         }
     }
 }

@@ -30,7 +30,7 @@ public class JarObfuscator {
         try {
             this.jarfile = new JarFile(file);
         } catch (IOException e) {
-            Logger.getInstance().error(String.format("Failed to create instance of JarFile from file: '%s' - %s", file.getName(), e.getMessage()));
+            Logger.getInstance().error("Failed to create instance of JarFile from file: '%s' - %s", file.getName(), e.getMessage());
         }
     }
 
@@ -81,13 +81,13 @@ public class JarObfuscator {
                         Logger.getInstance().info(JarObfuscator.class, String.format("Saved obfuscated entry '%s'", name));
                     }
                 } catch (IOException e) {
-                    Logger.getInstance().error("Failed to call putNextEntry on 'out' - " + e.getMessage());
+                    Logger.getInstance().error("Failed to call putNextEntry on 'out' - %s", e.getMessage());
                 }
             });
 
             out.close();
         } catch (IOException e) {
-            Logger.getInstance().error(String.format("Failed to create jar output stream for file '%s' - %s\n\t\tOr failed to parse JavaClass", jarfile.getName(), e.getMessage()));
+            Logger.getInstance().error("Failed to create jar output stream for file '%s' - %s\n\t\tOr failed to parse JavaClass", jarfile.getName(), e.getMessage());
         }
     }
 

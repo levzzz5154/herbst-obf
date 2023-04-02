@@ -1,6 +1,5 @@
 package xyz.terrific.modifiers.modifiers;
 
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.apache.bcel.classfile.ConstantFieldref;
 import org.apache.bcel.classfile.ConstantNameAndType;
 import org.apache.bcel.classfile.ConstantUtf8;
@@ -29,12 +28,12 @@ public class FieldRenamer extends Modifier {
             String originalFieldName = field.getName();
             int index = field.getNameIndex();
 
-            String newName = RandomUtil.generateRandomString(6);
+            String newName = RandomUtil.generateRandomString(ModifierManager.getRandomLength());
             int newIndex = constantPoolGen.addUtf8(newName);
             constantPoolGen.setConstant(index, constantPoolGen.getConstant(newIndex));
 
             if (ModifierManager.getShouldLog()) {
-                Logger.getInstance().info(FieldRenamer.class, String.format("Renamed '%s' (%d) to '%s' (%d)", originalFieldName, index, newName, newIndex));
+                Logger.getInstance().info(FieldRenamer.class, "Renamed '%s' (%d) to '%s' (%d)", originalFieldName, index, newName, newIndex);
             }
 
             if (isJarFile) {
@@ -60,7 +59,7 @@ public class FieldRenamer extends Modifier {
                 });
 
                 if (ModifierManager.getShouldLog()) {
-                    Logger.getInstance().info(FieldRenamer.class, String.format("Renamed %d references to '%s' to '%s'", count.get(), originalFieldName, newName));
+                    Logger.getInstance().info(FieldRenamer.class, "Renamed %s references to '%s' to '%s'", String.valueOf(count.get()), originalFieldName, newName);
                 }
             }
         });

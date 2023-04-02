@@ -28,7 +28,7 @@ public class Main {
             System.exit(1);
         }
 
-        Logger.getInstance().info(String.format("Starting: \n\t\tVersion: %s\n\t\tArguments: %s", Version, Arrays.toString(args)));
+        Logger.getInstance().info("Starting: \n\t\tVersion: %s\n\t\tArguments: %s", Version, Arrays.toString(args));
 
 
 
@@ -44,7 +44,7 @@ public class Main {
                         return;
                     }
 
-                    Logger.getInstance().info(Main.class, "Processing file: '" + file.getName() + "'");
+                    Logger.getInstance().info(Main.class, "Processing file: '%s'", file.getName());
                     if (file.getName().endsWith(".jar")) {
                         new JarObfuscator(file)
                                 .obfuscate();
@@ -55,7 +55,7 @@ public class Main {
                 }
         );
 
-        Logger.getInstance().info("Bye :)");
+        Logger.getInstance().info((Object) "Bye :)");
         Logger.getInstance().close();
     }
 
