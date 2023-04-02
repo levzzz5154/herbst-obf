@@ -10,7 +10,6 @@ import xyz.terrific.util.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.InvocationTargetException;
 
 public class ClassObfuscator {
     private final File classfile;
@@ -25,16 +24,7 @@ public class ClassObfuscator {
             JavaClass jc = parser.parse();
             ClassGen gen = new ClassGen(jc);
 
-            ModifierManager.getModifiers().forEach(modifier -> {
-                try {
-                    Logger.getInstance().info(ClassObfuscator.class, "Running " + modifier.getSimpleName());
-                    modifier.getConstructor(ClassGen.class, Boolean.class)
-                            .newInstance(gen, false)
-                            .transform();
-                } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                    Logger.getInstance().error("Failed to call constructor of modifier '" + modifier.getSimpleName() + "' - " + e.getMessage());
-                }
-            });
+            ModifierManager.runModifiers(gen);
 
             File originalfile = new File(classfile.getName().replace(".class", "_bak.class"));
             String originalContent = FileUtils.readFile(classfile);
