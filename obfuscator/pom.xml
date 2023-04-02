@@ -15,11 +15,11 @@
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/org.apache.bcel/bcel -->
+        <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm -->
         <dependency>
-            <groupId>org.apache.bcel</groupId>
-            <artifactId>bcel</artifactId>
-            <version>6.7.0</version>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.5</version>
         </dependency>
     </dependencies>
 

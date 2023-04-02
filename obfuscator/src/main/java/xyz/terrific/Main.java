@@ -1,6 +1,8 @@
 package xyz.terrific;
 
-import xyz.terrific.modifiers.ModifierManager;
+import xyz.terrific.transformer.TransformerManager;
+import xyz.terrific.obfuscator.ClassObfuscator;
+import xyz.terrific.obfuscator.JarObfuscator;
 import xyz.terrific.util.Logger;
 
 import java.io.File;
@@ -10,7 +12,7 @@ import java.util.Arrays;
 public class Main {
     private static final String Version = "b0.0.1";
 
-    private static ModifierManager modfierManager;
+    private static TransformerManager modfierManager;
 
 
     public static void main(String[] args) {
@@ -32,7 +34,7 @@ public class Main {
 
 
 
-        modfierManager = new ModifierManager(true);
+        modfierManager = new TransformerManager(true);
 
 
 
