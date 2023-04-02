@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * @author TerrificTable
@@ -75,8 +77,13 @@ public class Logger {
      * @param caller String name of class calling function
      * @param message message to log
      */
-    public void info(String caller, String message) {
-        String str = getDate() + " (" + caller + ")  Info: " + message;
+    public void info(String caller, Object... message) {
+        Object[] args = new Object[0];
+        if (message.length > 1) {
+            args = Arrays.copyOfRange(message, 1, message.length);
+        }
+
+        String str = getDate() + " (" + caller + ")  Info: " + String.format((String) message[0], args);
         logWriter.println(str);
         logWriter.flush();
         if (stdout) System.out.println(str);
@@ -88,7 +95,7 @@ public class Logger {
      * @param caller class calling this function
      * @param message message to log
      */
-    public void info(Class<?> caller, String message) {
+    public void info(Class<?> caller, Object... message) {
         info(caller.getName(), message);
     }
     /**
@@ -96,7 +103,7 @@ public class Logger {
      *
      * @param message message to log
      */
-    public void info(String message) {
+    public void info(Object... message) {
         if (anonymousCaller) {
             info(Anonymous.class, message);
         } else {
@@ -110,8 +117,13 @@ public class Logger {
      * @param caller String name of caller class calling function
      * @param message message to log
      */
-    public void warning(String caller, String message) {
-        String str = getDate() + " (" + caller + ")  Warning: " + message;
+    public void warning(String caller, Object... message) {
+        Object[] args = new Object[0];
+        if (message.length > 1) {
+            args = Arrays.copyOfRange(message, 1, message.length);
+        }
+
+        String str = getDate() + " (" + caller + ")  Warning: " + String.format((String)message[0], args);
         logWriter.println(str);
         logWriter.flush();
         if (stdout) System.out.println(str);
@@ -123,7 +135,7 @@ public class Logger {
      * @param caller class calling this function
      * @param message message to log
      */
-    public void warning(Class<?> caller, String message) {
+    public void warning(Class<?> caller, Object... message) {
         warning(caller.getName(), message);
     }
 
@@ -132,7 +144,7 @@ public class Logger {
      *
      * @param message message to log
      */
-    public void warning(String message) {
+    public void warning(Object... message) {
         if (anonymousCaller) {
             warning(Anonymous.class, message);
         } else {
@@ -146,8 +158,13 @@ public class Logger {
      * @param caller String name of caller class calling function
      * @param message message to log
      */
-    public void error(String caller, String message) {
-        String str = getDate() + " (" + caller + ")  Error: " + message;
+    public void error(String caller, Object... message) {
+        Object[] args = new Object[0];
+        if (message.length > 1) {
+            args = Arrays.copyOfRange(message, 1, message.length);
+        }
+
+        String str = getDate() + " (" + caller + ")  Error: " + String.format((String) message[0], args);
         logWriter.println(str);
         logWriter.flush();
         if (stdout) System.err.println(str);
@@ -159,7 +176,7 @@ public class Logger {
      * @param caller class calling this function
      * @param message message to log
      */
-    public void error(Class<?> caller, String message) {
+    public void error(Class<?> caller, Object... message) {
         error(caller.getName(), message);
     }
 
@@ -168,7 +185,7 @@ public class Logger {
      *
      * @param message message to log
      */
-    public void error(String message) {
+    public void error(Object... message) {
         if (anonymousCaller) {
             error(Anonymous.class, message);
         } else {
