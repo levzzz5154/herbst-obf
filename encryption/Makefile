@@ -38,3 +38,7 @@ cpp: $(objects)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $<
 
+clean:
+	rm *.o
+	rm *.exe
+
