@@ -17,9 +17,13 @@ jobs:
         chmod +x c.sh
         chmod +x cpp.sh
     - name: C
-      run: ./c.sh
+      run: |
+        cd encryption
+        ./c.sh
     - name: C++
-      run: ./cpp.sh
+      run: |
+        cd encryption
+        ./cpp.sh
     - name: cleanup
       run: make clean
   
