@@ -11,7 +11,7 @@ src_files := $(wildcard *.$(EXT))
 objects   := $(src_files:%.$(EXT)=%.o)
 
 
-all: $(MAKECMDGOALS)
+all:
 	@if [ "$(suffix $(MAKECMDGOALS))" == ".c" ]; then \
 		$(MAKE) EXT=c STD=c2x c; \
 	elif [ "$(suffix $(MAKECMDGOALS))" == ".cpp"]; then \
