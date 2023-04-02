@@ -12,6 +12,7 @@ import java.util.List;
 public class ModifierManager {
     private static final List<Class<? extends Modifier>> modifiers = new ArrayList<>();
     private static boolean shouldLog;
+    private static int randomLength = 12;
 
     public ModifierManager(boolean shouldLog) {
         ModifierManager.shouldLog = shouldLog;
@@ -38,13 +39,13 @@ public class ModifierManager {
         ModifierManager.getModifiers().forEach(modifier -> {
             try {
                 if (ModifierManager.getShouldLog()) {
-                    Logger.getInstance().info(ClassObfuscator.class, "Running " + modifier.getSimpleName() + " on " + classgen.getFileName());
+                    Logger.getInstance().info(ClassObfuscator.class, "Running %s on %s", modifier.getSimpleName(), classgen.getFileName());
                 }
                 modifier.getConstructor(ClassGen.class, Boolean.class)
                         .newInstance(classgen, false)
                         .transform();
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                Logger.getInstance().error("Failed to call constructor of modifier '" + modifier.getSimpleName() + "' - " + e.getMessage());
+                Logger.getInstance().error((Object) "Failed to call constructor of modifier '%s' - %s", modifier.getSimpleName(), e.getMessage());
             }
         });
 
@@ -56,5 +57,9 @@ public class ModifierManager {
 
     public static boolean getShouldLog() {
         return shouldLog;
+    }
+
+    public static int getRandomLength() {
+        return randomLength;
     }
 }
