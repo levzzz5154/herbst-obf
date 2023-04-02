@@ -1,5 +1,6 @@
 package xyz.terrific;
 
+import xyz.terrific.modifiers.ModifierManager;
 import xyz.terrific.util.Logger;
 
 import java.io.File;
@@ -8,6 +9,8 @@ import java.util.Arrays;
 
 public class Main {
     private static final String Version = "b0.0.1";
+
+    private static ModifierManager modfierManager;
 
 
     public static void main(String[] args) {
@@ -25,12 +28,35 @@ public class Main {
             System.exit(1);
         }
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Logger.getInstance().info("Bye :)");
-            Logger.getInstance().close();
-        }));
         Logger.getInstance().info(String.format("Starting: \n\t\tVersion: %s\n\t\tArguments: %s", Version, Arrays.toString(args)));
 
+
+
+        modfierManager = new ModifierManager(true);
+
+
+
+        Arrays.stream(args)
+                .map(File::new)
+                .forEach(file -> {
+                    if (!file.exists()) {
+                        Logger.getInstance().error(Main.class, "file '" + file.getName() + "' doesnt exist");
+                        return;
+                    }
+
+                    Logger.getInstance().info(Main.class, "Processing file: '" + file.getName() + "'");
+                    if (file.getName().endsWith(".jar")) {
+                        new JarObfuscator(file)
+                                .obfuscate();
+                    } else {
+                        new ClassObfuscator(file)
+                                .obfuscate();
+                    }
+                }
+        );
+
+        Logger.getInstance().info("Bye :)");
+        Logger.getInstance().close();
     }
 
 
