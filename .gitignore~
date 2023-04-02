@@ -1,9 +1,0 @@
-# executables
-*.o
-*.exe
-*.class
-*.jar
-
-# maven
-target/
-
