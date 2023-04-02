@@ -26,7 +26,7 @@ jobs:
         cd obfuscator
         mvn -B package --file pom.xml
     - name: rename `jar.jar` to `jar-commit.jar`
-      run: cp obfuscator/*.jar Obfuscator-${{ github.sha }}.jar # idk...
+      run: cp obfuscator/target/*.jar Obfuscator-${{ github.sha }}.jar # idk...
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1.0.8
       with:
