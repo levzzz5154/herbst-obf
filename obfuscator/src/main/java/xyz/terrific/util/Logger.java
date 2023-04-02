@@ -13,13 +13,18 @@ import java.util.Date;
  *
  * TODO: make log overloads get the caller automatically instead of using `Anonymous.class`
  */
-@SuppressWarnings("ResultOfMethodCallIgnored")
+@SuppressWarnings({"ResultOfMethodCallIgnored", "unused"})
 public class Logger {
     private static Logger instance;
 
     private PrintWriter logWriter;
+    private boolean stdout;
+    private boolean anonymousCaller;
 
 
+    /**
+     * Create logfile and initialize logWriter
+     */
     private Logger() {
         String date = new SimpleDateFormat("dd-MM-yyyy hh-mm").format(new Date(System.currentTimeMillis()));
         File logFolder = new File("logs/");
@@ -43,6 +48,10 @@ public class Logger {
         }
     }
 
+    /**
+     * Singleton
+     * @return returns this class instance (singleton)
+     */
     public static Logger getInstance() {
         if (instance == null)
             instance = new Logger();
@@ -50,40 +59,151 @@ public class Logger {
     }
 
 
+    /**
+     * initialize Logger and check if logger failed to initialize
+     * @return state of success (true if check was successful, otherwise false)
+     */
+    public boolean initialize(boolean stdout, boolean anonymousCaller) {
+        this.stdout = stdout;
+        this.anonymousCaller = anonymousCaller;
+        return logWriter != null;
+    }
+
+    /**
+     * info
+     *
+     * @param caller String name of class calling function
+     * @param message message to log
+     */
+    public void info(String caller, String message) {
+        String str = getDate() + " (" + caller + ")  Info: " + message;
+        logWriter.println(str);
+        logWriter.flush();
+        if (stdout) System.out.println(str);
+    }
+
+    /**
+     * info
+     *
+     * @param caller class calling this function
+     * @param message message to log
+     */
     public void info(Class<?> caller, String message) {
-        logWriter.println(getDate() + " (" + caller.getSimpleName() + ")  INFO: " + message);
-        logWriter.flush();
+        info(caller.getSimpleName(), message);
     }
+    /**
+     * info
+     *
+     * @param message message to log
+     */
     public void info(String message) {
-        info(Anonymous.class, message);
+        if (anonymousCaller) {
+            info(Anonymous.class, message);
+        } else {
+            info(getCaller(0).getClassName(), message);
+        }
     }
 
+    /**
+     * warning
+     *
+     * @param caller String name of caller class calling function
+     * @param message message to log
+     */
+    public void warning(String caller, String message) {
+        String str = getDate() + " (" + caller + ")  Warning: " + message;
+        logWriter.println(str);
+        logWriter.flush();
+        if (stdout) System.out.println(str);
+    }
+
+    /**
+     * warning
+     *
+     * @param caller class calling this function
+     * @param message message to log
+     */
     public void warning(Class<?> caller, String message) {
-        logWriter.println(getDate() + " (" + caller.getSimpleName() + ") WARNING: " + message);
-        logWriter.flush();
+        warning(caller.getSimpleName(), message);
     }
+
+    /**
+     * warning
+     *
+     * @param message message to log
+     */
     public void warning(String message) {
-        warning(Anonymous.class, message);
+        if (anonymousCaller) {
+            warning(Anonymous.class, message);
+        } else {
+            warning(getCaller(0).getClassName(), message);
+        }
     }
 
-    public void error(Class<?> caller, String message) {
-        logWriter.println(getDate() + " (" + caller.getSimpleName() + ") Errror: " + message);
+    /**
+     * error
+     *
+     * @param caller String name of caller class calling function
+     * @param message message to log
+     */
+    public void error(String caller, String message) {
+        String str = getDate() + " (" + caller + ")  Error: " + message;
+        logWriter.println(str);
         logWriter.flush();
+        if (stdout) System.err.println(str);
     }
+
+    /**
+     * error
+     *
+     * @param caller class calling this function
+     * @param message message to log
+     */
+    public void error(Class<?> caller, String message) {
+        error(caller.getSimpleName(), message);
+    }
+
+    /**
+     * error
+     *
+     * @param message message to log
+     */
     public void error(String message) {
-        warning(Anonymous.class, message);
+        if (anonymousCaller) {
+            error(Anonymous.class, message);
+        } else {
+            error(getCaller(0).getClassName(), message);
+        }
     }
 
 
-
+    /**
+     * Close PrintWriter (called on shutdown)
+     */
     public void close() {
         logWriter.close();
     }
 
 
+    private static StackTraceElement[] getCallers() {
+        return Thread.currentThread().getStackTrace();
+    }
+    private static StackTraceElement getCaller(int index) {
+        return getCallers()[index + 4];
+    }
+
+
+    /**
+     * Get date
+     *
+     * @return current time like: "[hh:mm:ss]"
+     */
     private String getDate() {
         return "[" + new SimpleDateFormat("hh:mm:ss").format(new Date(System.currentTimeMillis())) + "]";
     }
 
+    /**
+     * (probably temporary) class
+     */
     private static class Anonymous {}
 }
