@@ -25,5 +25,7 @@ jobs:
         cd encryption
         ./cpp.sh
     - name: cleanup
-      run: make clean
+      run: | 
+        cd encryption
+        make clean
   
