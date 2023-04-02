@@ -89,7 +89,7 @@ public class Logger {
      * @param message message to log
      */
     public void info(Class<?> caller, String message) {
-        info(caller.getSimpleName(), message);
+        info(caller.getName(), message);
     }
     /**
      * info
@@ -124,7 +124,7 @@ public class Logger {
      * @param message message to log
      */
     public void warning(Class<?> caller, String message) {
-        warning(caller.getSimpleName(), message);
+        warning(caller.getName(), message);
     }
 
     /**
@@ -160,7 +160,7 @@ public class Logger {
      * @param message message to log
      */
     public void error(Class<?> caller, String message) {
-        error(caller.getSimpleName(), message);
+        error(caller.getName(), message);
     }
 
     /**
