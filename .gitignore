@@ -4,3 +4,6 @@
 *.class
 *.jar
 
+# maven
+target/
+
