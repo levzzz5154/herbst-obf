@@ -12,7 +12,6 @@ objects   := $(src_files:%.$(EXT)=%.o)
 
 
 all:
-	echo [ "$(suffix $(MAKECMDGOALS))" == ".c" ]
 	@if [ "$(suffix $(MAKECMDGOALS))" == ".c" ]; then \
 		$(MAKE) EXT=c STD=c2x c; \
 	elif [ "$(suffix $(MAKECMDGOALS))" == ".cpp"]; then \
