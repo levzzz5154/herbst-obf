@@ -33,5 +33,5 @@ jobs:
       uses: actions/upload-pages-artifact@v1.0.8
       with:
         name: Obfuscator-${{ github.sha }}
-        path: out/Obfuscator-${{ github.sha }}.jar
+        path: out/
       
