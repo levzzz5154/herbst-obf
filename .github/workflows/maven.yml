@@ -7,7 +7,6 @@ on:
 defaults:
   run:
     shell: bash
-    working-directory: obfuscator/
 
 jobs:
   build:
@@ -24,6 +23,7 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: |
+        cd obfuscator
         mvn -B package --file pom.xml
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1.0.8
