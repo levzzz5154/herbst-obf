@@ -1,0 +1,6 @@
+# executables
+*.o
+*.exe
+*.class
+*.jar
+
