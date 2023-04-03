@@ -24,7 +24,7 @@ jobs:
     - name: rename `jar.jar` to `jar-commit.jar`
       run: |
         mkdir out
-        cp obfuscator/target/*.jar out/Obfuscator-${{ github.sha }}.jar # idk...
+        mv obfuscator/target/*.jar out/
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v1.0.8
       with:
