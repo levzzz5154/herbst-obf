@@ -1,7 +1,9 @@
 package xyz.terrific.transformer.transformers;
 
 import org.objectweb.asm.tree.ClassNode;
+import xyz.terrific.Main;
 import xyz.terrific.transformer.Transformer;
+import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.Logger;
 import xyz.terrific.util.RandomUtil;
 
@@ -9,7 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+@Group(name = "renamers")
 public class FieldRenamer extends Transformer {
+    @Override
     public void transform() {
         Map<String, String> remap = new HashMap<>();
 
@@ -34,6 +38,14 @@ public class FieldRenamer extends Transformer {
                         }));
 
         applyRemap(remap);
+    }
+
+    @Override
+    public boolean parseConfig(Map<String, Object> config) {
+        RandomUtil.setAlphabet((String) config.get("dictionary"));
+        RandomUtil.setRandomLength((Integer) config.get("length"));
+
+        return (Boolean) config.get("fields");
     }
 }
 

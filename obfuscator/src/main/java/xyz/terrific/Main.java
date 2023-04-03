@@ -1,5 +1,6 @@
 package xyz.terrific;
 
+import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.TransformerManager;
 import xyz.terrific.util.Logger;
 
@@ -11,7 +12,8 @@ public class Main {
     private static final String Name    = "Herbst";
     private static final String Version = "b0.0.1";
 
-    private static TransformerManager tManager;
+    private static TransformerManager transformerManager;
+    private static ConfigManager configManager;
 
 
     public static void main(String[] args) {
@@ -21,42 +23,39 @@ public class Main {
             } catch (URISyntaxException e) {
                 e.printStackTrace();
             }
-            System.exit(1);
+            exit(1);
         }
 
         if (!Logger.getInstance().initialize(true, false)) {
             System.err.println("Logger failed to initialize");
-            System.exit(1);
+            exit(1);
         }
 
         Logger.getInstance().raw("%s Starting: \n\t\tVersion: %s\n\t\tArguments: %s", Name, Version, Arrays.toString(args));
 
-//        Arrays.stream(args)
-//                .map(File::new)
-//                .forEach(file -> {
-//                    if (!file.exists()) {
-//                        Logger.getInstance().error(Main.class, "file '" + file.getName() + "' doesnt exist");
-//                        return;
-//                    }
-//
-//                    Logger.getInstance().info(Main.class, "Processing file: '%s'", file.getName());
-//                    new JarObfuscator(file).init();
-//                    tManager = new TransformerManager(false);
-//                    new JarObfuscator(file).obfuscate();
-//                }
-//        );
+        configManager = new ConfigManager(new File(args[0]));
+        configManager.load();
 
-        File file = new File(args[0]);
+        File file = new File((String) configManager.getConfig().get("input"));
         Logger.getInstance().info(Main.class, "Processing file: '%s'", file.getName());
         new JarObfuscator(file).init();
-        tManager = new TransformerManager(true);
+        transformerManager = new TransformerManager(true);
         new JarObfuscator(file).obfuscate();
 
-        Logger.getInstance().raw("Bye :)");
-        Logger.getInstance().close();
+        exit(0);
     }
 
     public static String getName() {
         return Name;
+    }
+
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static void exit(int i) {
+        Logger.getInstance().raw("Bye :)");
+        Logger.getInstance().close();
+        System.exit(i);
     }
 }

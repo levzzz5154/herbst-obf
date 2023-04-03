@@ -4,8 +4,8 @@ import java.security.SecureRandom;
 
 public class RandomUtil {
     private static final SecureRandom random = new SecureRandom();
-    private static final String alphabet = "abcdefghijklmnopqrstuvwxyzüöäABCDEFGHIJKLMNOPQRSTUVWXYZÜÖÄ";
-    private static final int randomLength = 12;
+    private static String alphabet = "abcdefghijklmnopqrstuvwxyzüöäABCDEFGHIJKLMNOPQRSTUVWXYZÜÖÄ";
+    private static int randomLength = 12;
 
 
     public static String generateRandomString() {
@@ -22,5 +22,17 @@ public class RandomUtil {
 
     public static int getRandomLength() {
         return randomLength;
+    }
+
+    public static void setRandomLength(Integer length) {
+        if (length != null && length >= 1) {
+            randomLength = length;
+        }
+    }
+
+    public static void setAlphabet(String dictionary) {
+        if (dictionary != null && !dictionary.isEmpty()) {
+            alphabet = dictionary;
+        }
     }
 }

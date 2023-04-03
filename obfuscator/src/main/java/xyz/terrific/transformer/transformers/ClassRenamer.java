@@ -2,6 +2,7 @@ package xyz.terrific.transformer.transformers;
 
 import xyz.terrific.JarObfuscator;
 import xyz.terrific.transformer.Transformer;
+import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.ClassNodeUtils;
 import xyz.terrific.util.Logger;
 import xyz.terrific.util.RandomUtil;
@@ -9,6 +10,7 @@ import xyz.terrific.util.RandomUtil;
 import java.util.HashMap;
 import java.util.Map;
 
+@Group(name = "renamers")
 public class ClassRenamer extends Transformer {
     @Override
     public void transform() {
@@ -28,5 +30,13 @@ public class ClassRenamer extends Transformer {
                 });
 
         applyRemap(remap);
+    }
+
+    @Override
+    public boolean parseConfig(Map<String, Object> config) {
+        RandomUtil.setAlphabet((String) config.get("dictionary"));
+        RandomUtil.setRandomLength((Integer) config.get("length"));
+
+        return (Boolean) config.get("classes");
     }
 }
