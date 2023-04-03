@@ -3,7 +3,7 @@ package xyz.terrific.transformer;
 import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.SimpleRemapper;
 import org.objectweb.asm.tree.ClassNode;
-import xyz.terrific.obfuscator.JarObfuscator;
+import xyz.terrific.JarObfuscator;
 
 import java.util.ArrayList;
 import java.util.Collection;

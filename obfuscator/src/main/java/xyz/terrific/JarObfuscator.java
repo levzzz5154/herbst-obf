@@ -1,24 +1,28 @@
-package xyz.terrific.obfuscator;
+package xyz.terrific;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
-import xyz.terrific.Main;
 import xyz.terrific.transformer.TransformerManager;
 import xyz.terrific.util.Logger;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 
-public class JarObfuscator implements IObfuscator {
+public class JarObfuscator {
     private JarFile jarfile;
     private String output;
 

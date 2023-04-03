@@ -1,6 +1,5 @@
 package xyz.terrific;
 
-import xyz.terrific.obfuscator.JarObfuscator;
 import xyz.terrific.transformer.TransformerManager;
 import xyz.terrific.util.Logger;
 
