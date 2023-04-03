@@ -22,6 +22,8 @@ public class TransformerManager {
                             return;
                         }
 
+                        Logger.getInstance().info((Object) "Running %s", clazz.getSimpleName());
+
                         try {
                             transformers.add((Transformer) clazz.getConstructor().newInstance());
                         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
