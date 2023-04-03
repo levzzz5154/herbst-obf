@@ -42,8 +42,8 @@ public class FieldRenamer extends Transformer {
 
     @Override
     public boolean parseConfig(ConfigManager.Configs<String, Object> config) {
-        RandomUtil.setAlphabet((String) config.get("dictionary"));
-        RandomUtil.setRandomLength((Integer) config.get("length"));
+        RandomUtil.setAlphabet(config.safeGet("dictionary", RandomUtil.getAlphabet()));
+        RandomUtil.setRandomLength(config.safeGet("length", RandomUtil.getRandomLength()));
 
         return config.safeGet("fields", true);
     }

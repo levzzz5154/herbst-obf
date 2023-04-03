@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class ConfigManager {
@@ -43,8 +45,8 @@ public class ConfigManager {
 
         try {
             Yaml yaml = new Yaml(loaderoptions);
-            config = yaml.load(Files.newInputStream(Objects.requireNonNull(configFile).toPath()));
-            transformerConfig = (Configs<String, Object>) config.get("transformers");
+            config = new Configs<>(yaml.load(Files.newInputStream(Objects.requireNonNull(configFile).toPath())));
+            transformerConfig = new Configs<>((HashMap<String, Object>) config.get("transformers"));
         } catch (IOException e) {
             Logger.getInstance().error((Object) "Failed to load config file '%s' - %s", Objects.requireNonNull(configFile).getName(), e.getMessage());
             Main.exit(1);
@@ -61,7 +63,23 @@ public class ConfigManager {
     }
 
 
-    public static class Configs<K, V> extends HashMap<K, V> {
+    public static class Configs<K, V> extends HashMap<K, V> implements Map<K, V> {
+        public Configs(Map<K, V> map) {
+            super(map);
+        }
+        public Configs(HashMap<K, V> map) {
+            super(map);
+        }
+        public Configs(LinkedHashMap<K, V> map) {
+            super(map);
+        }
+
+        /**
+         * @param key key to get from map
+         * @param defaultVal default value to be returned when result of `get(key)` is null
+         * @return returns get(key) or default value (when get(key) is null)
+         * @param <T> type of default value and return value
+         */
         public <T> T safeGet(String key, T defaultVal) {
             T value = (T) this.get(key);
             return value == null ? defaultVal : value;

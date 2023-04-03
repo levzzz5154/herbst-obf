@@ -30,6 +30,10 @@ public class RandomUtil {
         }
     }
 
+    public static String getAlphabet() {
+        return alphabet;
+    }
+
     public static void setAlphabet(String dictionary) {
         if (dictionary != null && !dictionary.isEmpty()) {
             alphabet = dictionary;

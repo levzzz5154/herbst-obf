@@ -3,11 +3,11 @@ output: "%name%.obf.jar"
 
 transformers:
   renamers:
-#    dictionary: "\\/._üöäÜÖÄ"
+#    dictionary: "\\/_üöäÜÖÄ"
     length:  24
     classes: true  # Rename classes
     fields:  true  # Rename fields
-#    methods: true  # Rename methods
+    methods: false # Rename methods
 #    localVariables: true  # Rename local variables
 #    enums: FULL   # NONE = Don't rename enums, FULL = Rename enum, TO_STRING = Rename enum, but override the toString() call
 #

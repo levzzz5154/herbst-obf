@@ -8,8 +8,8 @@ import xyz.terrific.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class TransformerManager {
     private static final List<Transformer> transformers = new ArrayList<>();
@@ -50,7 +50,7 @@ public class TransformerManager {
                 transformerConfig = group.name().toLowerCase();
             }
 
-            if (transformer.parseConfig((ConfigManager.Configs<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig))) {
+            if (transformer.parseConfig(new ConfigManager.Configs<>((HashMap<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig)))) {
                 Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
                 transformer.transform();
             }

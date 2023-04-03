@@ -26,7 +26,7 @@ public class JarObfuscator {
     private JarFile jarfile;
     private String output;
 
-    private static final Map<String, ClassNode> classes = new HashMap<>();
+    private static Map<String, ClassNode> classes = new HashMap<>();
     private static final Map<String, byte[]> files = new HashMap<>();
     private static Manifest manifest;
 
@@ -43,7 +43,6 @@ public class JarObfuscator {
     public static Manifest getManifest() {
         return manifest;
     }
-
 
     public void init() {
         Enumeration<JarEntry> entries = jarfile.entries();
@@ -120,7 +119,7 @@ public class JarObfuscator {
 
 
         if (TransformerManager.getShouldLog()) {
-            Logger.getInstance().info((Object) "Creating output file 's'", output);
+            Logger.getInstance().info((Object) "Creating output file '%s'", output);
         }
 
         Path outputPath = Paths.get(output);
@@ -132,7 +131,7 @@ public class JarObfuscator {
 
 
         if (TransformerManager.getShouldLog()) {
-            Logger.getInstance().info((Object) "Starting to write output file 's'", output);
+            Logger.getInstance().info((Object) "Starting to write output file '%s'", output);
         }
         try {
             JarOutputStream outJar = new JarOutputStream(Files.newOutputStream(outputPath, StandardOpenOption.CREATE, StandardOpenOption.CREATE_NEW, StandardOpenOption.WRITE));
@@ -156,7 +155,11 @@ public class JarObfuscator {
 
                     outJar.closeEntry();
                 } catch (IOException e) {
-                    Logger.getInstance().error((Object) "Failed to write classnode '%s' to output stream - %s", classNode.name, e.getMessage());
+                    if (e.getMessage().contains("duplicate entry")) {
+                        Logger.getInstance().warning((Object) "Failed to write classnode '%s' to output stream - %s", classNode.name, e.getMessage());
+                    } else {
+                        Logger.getInstance().error((Object) "Failed to write classnode '%s' to output stream - %s", classNode.name, e.getMessage());
+                    }
                 }
             });
 
@@ -190,6 +193,10 @@ public class JarObfuscator {
 
     public static Map<String, ClassNode> getClasses() {
         return classes;
+    }
+
+    public static void setClasses(Map<String, ClassNode> newClasses) {
+        classes = newClasses;
     }
 
     public static Map<String, byte[]> getFiles() {
