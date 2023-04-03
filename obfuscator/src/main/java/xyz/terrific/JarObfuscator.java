@@ -76,6 +76,10 @@ public class JarObfuscator {
             if (entry.getName().endsWith(".class")) {
                 ClassNode classNode = new ClassNode();
                 new ClassReader(bytes).accept(classNode, ClassReader.EXPAND_FRAMES);
+
+                if (classNode.superName == null) { // idk why, but some classes superclass is just null... so just filter them out here
+                    continue;
+                }
                 classes.put(classNode.name, classNode);
             } else {
                 files.put(entry.getName(), bytes);
