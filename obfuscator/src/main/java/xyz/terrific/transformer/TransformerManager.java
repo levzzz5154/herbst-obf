@@ -3,11 +3,12 @@ package xyz.terrific.transformer;
 import xyz.terrific.util.JVM;
 import xyz.terrific.util.Logger;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TransformerManager {
-    private static final List<Class<? extends Transformer>> modifiers = new ArrayList<>();
+    private static final List<Transformer> transformers = new ArrayList<>();
     private static boolean shouldLog;
     private static int randomLength = 12;
 
@@ -15,13 +16,17 @@ public class TransformerManager {
         TransformerManager.shouldLog = shouldLog;
 
         try {
-            JVM.getAllClassesInPackage("xyz.terrific.modifiers.modifiers")
+            JVM.getAllClassesInPackage("xyz.terrific.transformer.transformers")
                     .forEach((clazz) -> {
                         if (!Transformer.class.isAssignableFrom(clazz)) {
                             return;
                         }
 
-                        modifiers.add((Class<? extends Transformer>) clazz);
+                        try {
+                            transformers.add((Transformer) clazz.getConstructor().newInstance());
+                        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                            Logger.getInstance().error("Failed to get constructor (with signature: '()') for transformer '%s'", transformers.getClass().getName());
+                        }
                     });
         } catch (Exception e) {
             Logger.getInstance().error("Failed to load modifiers");
@@ -32,15 +37,14 @@ public class TransformerManager {
         this(false);
     }
 
-    public static void runModifiers() {
-        TransformerManager.getModifiers().forEach(modifier -> {
-            // run modifiers
-        });
 
+    public static void runTransformers() {
+        TransformerManager.transformers().forEach(Transformer::transform);
     }
 
-    public static List<Class<? extends Transformer>> getModifiers() {
-        return modifiers;
+
+    public static List<? extends Transformer> transformers() {
+        return transformers;
     }
 
     public static boolean getShouldLog() {
