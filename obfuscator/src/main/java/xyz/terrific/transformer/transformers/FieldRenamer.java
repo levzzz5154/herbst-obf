@@ -14,24 +14,27 @@ public class FieldRenamer extends Transformer {
     public void transform() {
         Map<String, String> remap = new HashMap<>();
 
-        classes.forEach(classNode ->
-                classNode.fields.forEach(field -> {
-                    String name = RandomUtil.generateRandomString(TransformerManager.getRandomLength());
+        classes
+                .stream().filter(clazz -> clazz.name.startsWith("lol/november"))
+                .forEach(classNode ->
+                        classNode.fields.forEach(field -> {
 
-                    Logger.getInstance().info((Object) "(%s.class) Renaming '%s' to '%s'", classNode.name, field.name, name);
+                            String name = RandomUtil.generateRandomString(TransformerManager.getRandomLength());
 
-                    Stack<ClassNode> stack = new Stack<>();
-                    stack.add(classNode);
+                            Logger.getInstance().info((Object) "(%s.class) Renaming '%s' to '%s'", classNode.name, field.name, name);
 
-                    while (!stack.isEmpty()) {
-                        ClassNode clazz = stack.pop();
-                        remap.put(clazz.name + "." + field.name, name);
+                            Stack<ClassNode> stack = new Stack<>();
+                            stack.add(classNode);
 
-                        stack.addAll(getExtending(clazz));
-                        stack.addAll(getImplementing(clazz));
-                    }
+                            while (!stack.isEmpty()) {
+                                ClassNode clazz = stack.pop();
+                                remap.put(clazz.name + "." + field.name, name);
 
-                }));
+                                stack.addAll(getExtending(clazz));
+                                stack.addAll(getImplementing(clazz));
+                            }
+
+                        }));
 
         applyRemap(remap);
     }
