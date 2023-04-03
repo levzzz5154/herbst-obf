@@ -10,7 +10,6 @@ import java.util.List;
 public class TransformerManager {
     private static final List<Transformer> transformers = new ArrayList<>();
     private static boolean shouldLog;
-    private static int randomLength = 12;
 
     public TransformerManager(boolean shouldLog) {
         TransformerManager.shouldLog = shouldLog;
@@ -21,8 +20,6 @@ public class TransformerManager {
                         if (!Transformer.class.isAssignableFrom(clazz)) {
                             return;
                         }
-
-                        Logger.getInstance().info((Object) "Running %s", clazz.getSimpleName());
 
                         try {
                             transformers.add((Transformer) clazz.getConstructor().newInstance());
@@ -41,7 +38,10 @@ public class TransformerManager {
 
 
     public static void runTransformers() {
-        TransformerManager.transformers().forEach(Transformer::transform);
+        TransformerManager.transformers().forEach(transformer -> {
+            Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
+            transformer.transform();
+        });
     }
 
 
@@ -51,9 +51,5 @@ public class TransformerManager {
 
     public static boolean getShouldLog() {
         return shouldLog;
-    }
-
-    public static int getRandomLength() {
-        return randomLength;
     }
 }
