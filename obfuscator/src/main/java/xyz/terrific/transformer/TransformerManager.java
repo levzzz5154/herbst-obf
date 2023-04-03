@@ -1,6 +1,7 @@
 package xyz.terrific.transformer;
 
 import xyz.terrific.Main;
+import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.JVM;
 import xyz.terrific.util.Logger;
@@ -49,7 +50,7 @@ public class TransformerManager {
                 transformerConfig = group.name().toLowerCase();
             }
 
-            if (transformer.parseConfig((Map<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig))) {
+            if (transformer.parseConfig((ConfigManager.Configs<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig))) {
                 Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
                 transformer.transform();
             }

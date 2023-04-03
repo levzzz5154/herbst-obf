@@ -3,7 +3,7 @@ output: "%name%.obf.jar"
 
 transformers:
   renamers:
-    dictionary: "\\/._0123456789"
+#    dictionary: "\\/._üöäÜÖÄ"
     length:  24
     classes: true  # Rename classes
     fields:  true  # Rename fields

@@ -4,6 +4,7 @@ import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.SimpleRemapper;
 import org.objectweb.asm.tree.ClassNode;
 import xyz.terrific.JarObfuscator;
+import xyz.terrific.config.ConfigManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -21,7 +22,7 @@ public abstract class Transformer {
     }
 
     public abstract void transform();
-    public abstract boolean parseConfig(Map<String, Object> config);
+    public abstract boolean parseConfig(ConfigManager.Configs<String, Object> config);
 
 
     protected boolean isExcluded(String name) {

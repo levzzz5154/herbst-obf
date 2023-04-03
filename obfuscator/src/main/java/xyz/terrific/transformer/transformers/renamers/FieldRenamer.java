@@ -1,6 +1,7 @@
 package xyz.terrific.transformer.transformers.renamers;
 
 import org.objectweb.asm.tree.ClassNode;
+import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.Logger;
@@ -40,11 +41,11 @@ public class FieldRenamer extends Transformer {
     }
 
     @Override
-    public boolean parseConfig(Map<String, Object> config) {
+    public boolean parseConfig(ConfigManager.Configs<String, Object> config) {
         RandomUtil.setAlphabet((String) config.get("dictionary"));
         RandomUtil.setRandomLength((Integer) config.get("length"));
 
-        return (Boolean) config.get("fields");
+        return config.safeGet("fields", true);
     }
 }
 
