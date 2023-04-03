@@ -21,10 +21,11 @@ public abstract class Transformer {
     }
 
     public abstract void transform();
+    public abstract boolean parseConfig(Map<String, Object> config);
 
 
     protected boolean isExcluded(String name) {
-//        return name.startsWith("lol/november");
+        // TODO: get list of exclusion from configs
         return false;
     }
 

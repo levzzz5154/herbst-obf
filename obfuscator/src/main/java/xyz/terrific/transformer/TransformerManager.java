@@ -1,11 +1,14 @@
 package xyz.terrific.transformer;
 
+import xyz.terrific.Main;
+import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.JVM;
 import xyz.terrific.util.Logger;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class TransformerManager {
     private static final List<Transformer> transformers = new ArrayList<>();
@@ -38,10 +41,19 @@ public class TransformerManager {
 
 
     public static void runTransformers() {
-        TransformerManager.transformers().forEach(transformer -> {
-            Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
-            transformer.transform();
-        });
+        for (Transformer transformer : TransformerManager.transformers()) {
+            String transformerConfig = transformer.getClass().getSimpleName().toLowerCase();
+
+            Group group = transformer.getClass().getAnnotation(Group.class);
+            if (group != null) {
+                transformerConfig = group.name().toLowerCase();
+            }
+
+            if (transformer.parseConfig((Map<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig))) {
+                Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
+                transformer.transform();
+            }
+        }
     }
 
 
