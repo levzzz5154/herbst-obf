@@ -2,7 +2,6 @@ package xyz.terrific.transformer.transformers;
 
 import org.objectweb.asm.tree.ClassNode;
 import xyz.terrific.transformer.Transformer;
-import xyz.terrific.transformer.TransformerManager;
 import xyz.terrific.util.Logger;
 import xyz.terrific.util.RandomUtil;
 
@@ -14,14 +13,13 @@ public class FieldRenamer extends Transformer {
     public void transform() {
         Map<String, String> remap = new HashMap<>();
 
-        classes
-                .stream().filter(clazz -> clazz.name.startsWith("lol/november"))
+        classes.stream()
+                .filter(clazz -> !isExcluded(clazz.name))
                 .forEach(classNode ->
                         classNode.fields.forEach(field -> {
+                            String name = RandomUtil.generateRandomString();
 
-                            String name = RandomUtil.generateRandomString(TransformerManager.getRandomLength());
-
-                            Logger.getInstance().info((Object) "(%s.class) Renaming '%s' to '%s'", classNode.name, field.name, name);
+                            Logger.getInstance().info((Object) "(%s.class) Renaming Field '%s' to '%s'", classNode.name, field.name, name);
 
                             Stack<ClassNode> stack = new Stack<>();
                             stack.add(classNode);
@@ -33,7 +31,6 @@ public class FieldRenamer extends Transformer {
                                 stack.addAll(getExtending(clazz));
                                 stack.addAll(getImplementing(clazz));
                             }
-
                         }));
 
         applyRemap(remap);
