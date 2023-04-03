@@ -21,7 +21,7 @@ jobs:
       run: |
         cd obfuscator
         mvn -B package --file pom.xml
-    - name: rename `jar.jar` to `jar-commit.jar`
+    - name: move jar files to out directory
       run: |
         mkdir out
         mv obfuscator/target/*.jar out/
