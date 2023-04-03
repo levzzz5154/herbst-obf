@@ -23,6 +23,12 @@ public abstract class Transformer {
     public abstract void transform();
 
 
+    protected boolean isExcluded(String name) {
+//        return name.startsWith("lol/november");
+        return false;
+    }
+
+
     protected Collection<? extends ClassNode> getImplementing(ClassNode owner) {
         return classes.stream()
                 .filter(classNode -> classNode.interfaces.contains(owner.name))
@@ -44,6 +50,9 @@ public abstract class Transformer {
 
     protected void applyRemap(Map<String, String> remap) {
         SimpleRemapper remapper = new SimpleRemapper(remap);
+
+        this.classMap = JarObfuscator.getClasses();
+        this.classes = new ArrayList<>(classMap.values());
 
         classes.forEach(clazz -> {
             ClassNode copy = new ClassNode();
