@@ -1,7 +1,6 @@
-package xyz.terrific.transformer.transformers;
+package xyz.terrific.transformer.transformers.renamers;
 
 import org.objectweb.asm.tree.ClassNode;
-import xyz.terrific.Main;
 import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.Logger;

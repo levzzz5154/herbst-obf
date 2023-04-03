@@ -1,0 +1,24 @@
+[10:19:18] Herbst Starting: 
+		Version: b0.0.1
+		Arguments: [config.yml]
+[10:19:18] (xyz.terrific.Main)  Info: Processing file: 'test.jar'
+[10:19:18] (xyz.terrific.JarObfuscator)  Info: Successfully read jar file 'test.jar'
+[10:19:18] (xyz.terrific.JarObfuscator)  Info: Running transformers on jar file 'test.jar'
+[10:19:18] (xyz.terrific.transformer.TransformerManager)  Info: Running ClassRenamer
+[10:19:19] (xyz.terrific.transformer.transformers.renamers.ClassRenamer)  Info: Renaming class 'Main' to '70105248688_11/35\170_485'
+[10:19:19] (xyz.terrific.transformer.TransformerManager)  Info: Running FieldRenamer
+[10:19:19] (xyz.terrific.transformer.transformers.renamers.FieldRenamer)  Info: (Main.class) Renaming Field 'someString' to '057/\92_87.4.646858/58893'
+[10:19:19] (xyz.terrific.transformer.transformers.renamers.FieldRenamer)  Info: (Main.class) Renaming Field 'otherString' to '9083652\5_250760/\78\2._6'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Finished Running transformers on jar file 'test.jar'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing manifest of jar file 'test.jar' to output stream
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Creating output file 's'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Starting to write output file 's'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing classes
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing class '70105248688_11/35\170_485'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing class '70105248688_11/35\170_485'
+[10:19:19] (xyz.terrific.JarObfuscator)  Error: Failed to write classnode '70105248688_11/35\170_485' to output stream - duplicate entry: 70105248688_11/35\170_485.class
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing files
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing file 'META-INF/'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Writing file 'META-INF/MANIFEST.MF'
+[10:19:19] (xyz.terrific.JarObfuscator)  Info: Finished writing obfuscated jar
+[10:19:19] Bye :)

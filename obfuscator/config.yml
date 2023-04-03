@@ -1,10 +1,10 @@
-input: test.jar
-output: output.jar
+input: "test.jar"
+output: "%name%.obf.jar"
 
 transformers:
   renamers:
     dictionary: "\\/._0123456789"
-#    length:  12
+    length:  24
     classes: true  # Rename classes
     fields:  true  # Rename fields
 #    methods: true  # Rename methods

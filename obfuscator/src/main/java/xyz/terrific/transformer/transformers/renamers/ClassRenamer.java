@@ -1,4 +1,4 @@
-package xyz.terrific.transformer.transformers;
+package xyz.terrific.transformer.transformers.renamers;
 
 import xyz.terrific.JarObfuscator;
 import xyz.terrific.transformer.Transformer;

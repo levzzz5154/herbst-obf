@@ -34,7 +34,7 @@ public class JarObfuscator {
     public JarObfuscator(File file) {
         try {
             this.jarfile = new JarFile(file);
-            this.output = (String) Main.getConfigManager().getConfig().get("output");
+            this.output = ((String) Main.getConfigManager().getConfig().get("output")).replace("%name%", file.getName().replace(".jar", ""));
         } catch (IOException e) {
             Logger.getInstance().error("Failed to create instance of JarFile from file: '%s' - %s", Main.getConfigManager().getConfig().get("output"), e.getMessage());
         }
