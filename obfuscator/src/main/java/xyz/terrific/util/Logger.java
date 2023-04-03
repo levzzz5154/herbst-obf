@@ -7,7 +7,6 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * @author TerrificTable
@@ -69,6 +68,19 @@ public class Logger {
         this.stdout = stdout;
         this.anonymousCaller = anonymousCaller;
         return logWriter != null;
+    }
+
+
+    public void raw(Object... message) {
+        Object[] args = new Object[0];
+        if (message.length > 1) {
+            args = Arrays.copyOfRange(message, 1, message.length);
+        }
+
+        String str = getDate() + " " + String.format((String) message[0], args);
+        logWriter.println(str);
+        logWriter.flush();
+        if (stdout) System.out.println(str);
     }
 
     /**
