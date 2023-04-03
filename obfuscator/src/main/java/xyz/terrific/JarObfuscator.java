@@ -40,6 +40,10 @@ public class JarObfuscator {
         }
     }
 
+    public static Manifest getManifest() {
+        return manifest;
+    }
+
 
     public void init() {
         Enumeration<JarEntry> entries = jarfile.entries();
