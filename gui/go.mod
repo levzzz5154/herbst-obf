@@ -2,10 +2,8 @@ module herbst/gui
 
 go 1.19
 
-require github.com/AllenDang/giu v0.6.2
-
 require (
-	github.com/AllenDang/cimgui-go v0.0.0-20230410090255-826ab4785ff0 // indirect
+	github.com/AllenDang/giu v0.6.2 // indirect
 	github.com/AllenDang/go-findfont v0.0.0-20200702051237-9f180485aeb8 // indirect
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad // indirect
 	github.com/faiface/mainthread v0.0.0-20171120011319-8b78f0a41ae3 // indirect

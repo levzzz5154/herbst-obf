@@ -1,7 +1,7 @@
 branch := $(shell git rev-parse --abbrev-ref HEAD)
 commit := $(shell git rev-parse --short HEAD)
 
-LDFLAGS := "-X main.COMMIT=${commit} -X main.BRANCH=${branch}"
+LDFLAGS := "-s -w -H=windowsgui -extldflags=-static -X main.COMMIT=${commit} -X main.BRANCH=${branch}"
 FLAGS :=
 
 
