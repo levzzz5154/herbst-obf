@@ -1,0 +1,34 @@
+## This is just for my local drone instance... dont worry about this
+
+---
+kind: pipeline
+type: docker
+name: test
+
+trigger:
+  event:
+    - push
+
+steps:
+  - name: Build encryption/
+    image: alpine:latest
+    commands:
+      - apk add make bash gcc
+      - cd encryption/
+      - ./c.sh
+      - ./cpp.sh
+
+  - name: Build gui/
+    image: alpine:latest
+    commands:
+      - apk add make go gcc
+      - cd gui/
+      - make build
+
+  - name: Build obfuscator/
+    image: alpine:latest
+    commands:
+      - apk add maven openjdk8
+      - cd obfuscator/
+      - mvn package
+
