@@ -8,6 +8,8 @@ import (
 )
 
 var (
+	split float32 = 200
+
 	about = false
 	about_md = strings.Join([]string{
 		"\n___\n",
@@ -45,6 +47,11 @@ func View() []gui.Widget {
 	}
 
 	viewport := []gui.Widget {
+		gui.SplitLayout(gui.DirectionHorizontal, split, gui.Layout{
+			gui.Label("Hello"),
+		}, gui.Layout{
+			gui.Label("World"),
+		}),
 	}
 
 	return append([]gui.Widget { MenuBar() }, viewport...)
