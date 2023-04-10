@@ -7,15 +7,21 @@ on:
 jobs:
   build:
     # if: "contains(github.event.head_commit.message, '[make]')"
-    runs-on: alpine-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: setup
+      
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.20
+    - name: Get dependencies
       run: |
-        apk add git make gcc go
+        cd gui
+        go mod tidy
     - name: Build
       run: |
         cd gui
-        make build
+        make build FLAGS=-v
 
