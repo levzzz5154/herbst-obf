@@ -13,6 +13,7 @@ steps:
     commands:
       - apk add make bash gcc
       - cd encryption/
+      - chmod +x c.sh cpp.sh
       - ./c.sh
       - ./cpp.sh
 
