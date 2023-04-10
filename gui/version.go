@@ -11,6 +11,6 @@ var (
 )
 
 func Version() string {
-	return fmt.Sprintf("Herbst GUI v%s (%s/%s)\n", version, BRANCH, COMMIT)
+	return fmt.Sprintf("Herbst GUI v%s (%s/%s)", version, BRANCH, COMMIT)
 }
 
