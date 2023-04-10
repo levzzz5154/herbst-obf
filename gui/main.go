@@ -1,22 +1,38 @@
 package main
 
 import (
-	"fmt"
+	gui "github.com/AllenDang/giu"
+	"github.com/AllenDang/imgui-go"
 )
 
-var BRANCH, COMMIT string
 
-var (
-	version = "0.1.0"
+func MenuBar() *gui.MenuBarWidget {
+	return gui.MenuBar().Layout(
+		gui.Menu("File").Layout(),
+		gui.Menu("Edit").Layout(),
+		gui.Menu("Help").Layout(
+			gui.MenuItem("About").OnClick(func() {
+			}),
+		),
+	)
+}
 
-)
+func View() []gui.Widget {
+	viewport := []gui.Widget {
+	}
 
-func Version() {
-	fmt.Printf("Herbst GUI v%s (%s/%s)\n", version, BRANCH, COMMIT)
+	return append([]gui.Widget { MenuBar() }, viewport...)
 }
 
 
 func main() {
-	Version()
+	window := gui.NewMasterWindow(Version(), 1280, 720, 0)
+	window.Run(func() {
+		imgui.ShowDemoWindow(nil)
+
+		gui.SingleWindowWithMenuBar().Layout(
+			View()...,
+		)
+	})
 }
 
