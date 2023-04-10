@@ -8,15 +8,6 @@ trigger:
     - push
 
 steps:
-  - name: Build encryption/
-    image: alpine:latest
-    commands:
-      - apk add make bash gcc
-      - cd encryption/
-      - chmod +x c.sh cpp.sh
-      - ./c.sh
-      - ./cpp.sh
-
   - name: Build gui/
     image: alpine:latest
     commands:
