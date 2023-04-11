@@ -17,4 +17,5 @@ require (
 	golang.org/x/image v0.5.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/eapache/queue.v1 v1.1.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
