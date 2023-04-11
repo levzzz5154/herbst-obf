@@ -12,6 +12,6 @@ build:
 	$(MAKE) exec ACTION=build
 
 exec:
-	go $(ACTION) -ldflags $(LDFLAGS) $(FLAGS) .
+	go $(ACTION) -ldflags $(LDFLAGS) $(FLAGS) . $(ARGS)
 	
 

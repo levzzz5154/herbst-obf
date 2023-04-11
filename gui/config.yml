@@ -1,0 +1,33 @@
+input: "test.jar"
+output: "%name%.obf.jar"
+
+transformers:
+  renamers:
+#    dictionary: "\\/_üöäÜÖÄ"
+    length:  24
+    classes: true  # Rename classes
+    fields:  true  # Rename fields
+    methods: false # Rename methods
+#    localVariables: true  # Rename local variables
+#    enums: FULL   # NONE = Don't rename enums, FULL = Rename enum, TO_STRING = Rename enum, but override the toString() call
+#
+#  removers:
+#    lineNumbers: true
+#    generics:    false
+#
+#  string: # More options?
+#    enabled:    true
+#    complexity: 2 # 1-5
+#
+#  flow:
+#    enabled: true
+#    layers: 5 # 1-20, bigger the number the slower to obfuscate
+#
+#  minecraft:
+#    removeOptifineObfIds: true # remove the CF___ thing in the fields optifine leaves behind
+#
+#  shuffler:
+#    methods: false
+#    fields: true
+# ...
+
