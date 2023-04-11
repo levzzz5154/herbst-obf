@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"strings"
 
@@ -11,9 +12,15 @@ import (
 )
 
 var (
+	split float32 = 200
+	about         = false
+
+	options []string
+	option	string
+
 	editor *gui.CodeEditorWidget
-	split  float32 = 200
-	about          = false
+	list   *gui.ListBoxWidget
+	config Config
 )
 
 func MenuBar() *gui.MenuBarWidget {
@@ -41,21 +48,22 @@ func View() []gui.Widget {
 				gui.Label("Obfuscator for November Client"),
 			),
 		)
-
 		about = popup.HasFocus()
 	}
 
+	editor.Text(config.ToString())
+
 	viewport := []gui.Widget{
 		gui.TabBar().TabItems(
-			gui.TabItem("Code").Layout(
-				editor,
-			),
 			gui.TabItem("Visual").Layout(
 				gui.SplitLayout(gui.DirectionHorizontal, split, gui.Layout{
-					gui.Label("Hello"),
+					list,
 				}, gui.Layout{
-					gui.Label("World"),
+					gui.Label(option),
 				}),
+			),
+			gui.TabItem("Code").Layout(
+				editor,
 			),
 		),
 	}
@@ -69,27 +77,32 @@ func main() {
 		errors.HandleF(true, "Usage: %s <config file>", path[len(path)-1])
 	}
 
-	configFileContents, err := os.ReadFile(os.Args[1])
-	if err != nil { errors.Handle(true, err) }
+
+	config.Parse(os.Args[1])
+	for k := range config.Map {
+		options = append(options, strings.Title(fmt.Sprintf("%s", k)))
+	}
+
+
+	option = options[0]
+	list = gui.ListBox("Config Options", options)
+	list.OnChange(func(selectedIndex int) {
+		option = options[selectedIndex]
+	})
+	
 	editor = gui.CodeEditor().
 		ShowWhitespaces(true).
 		TabSize(4).
-		Border(true).
-		Text(string(configFileContents))
+		Border(true)
+
 
 	window := gui.NewMasterWindow(Version(), 1280, 720, 0)
 	window.Run(func() {
 		imgui.ShowDemoWindow(nil)
 
-		// gui.PushColorWindowBg(color.RGBA{0x21, 0x21, 0x21, 0xff})
-		// gui.PushStyleColor(gui.StyleColorMenuBarBg, color.RGBA{0x21, 0x21, 0x21, 0xff})
-		// gui.PushStyleColor(gui.StyleColorBorder, color.RGBA{0x12, 0x12, 0x12, 0xff})
 		gui.SingleWindowWithMenuBar().Layout(
 			View()...,
 		)
-		// gui.PopStyleColor()
-		// gui.PopStyleColor()
-		// gui.PopStyleColor()
 	})
 }
 
