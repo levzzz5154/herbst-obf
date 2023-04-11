@@ -14,6 +14,8 @@ func HandleF(fatal bool, format string, args... interface{}) {
 }
 
 func Handle(fatal bool, err error) {
-	HandleF(fatal, "[Error] %s", err)
+	if err != nil {
+		HandleF(fatal, "[Error] %s", err)
+	}
 }
 
