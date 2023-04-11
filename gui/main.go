@@ -1,10 +1,9 @@
 package main
 
 import (
+	"herbst/gui/errors"
 	"os"
 	"strings"
-
-	"herbst/gui/errors"
 
 	gui "github.com/AllenDang/giu"
 	"github.com/AllenDang/imgui-go"
@@ -27,4 +26,3 @@ func main() {
 		)
 	})
 }
-

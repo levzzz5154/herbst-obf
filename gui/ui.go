@@ -32,7 +32,7 @@ func MenuBar() *gui.MenuBarWidget {
 	)
 }
 
-func View() []gui.Widget {
+func About() {
 	if about {
 		popup := gui.Window("About")
 		popup.Size(290, 140)
@@ -47,21 +47,32 @@ func View() []gui.Widget {
 		)
 		about = popup.HasFocus()
 	}
+}
 
-	editor.Text(config.ToString())
+func Tab_Visual() gui.Layout {
+	return gui.Layout{
+		gui.SplitLayout(gui.DirectionHorizontal, split, gui.Layout{
+			list,
+		}, gui.Layout{
+			gui.Label(option),
+		}),
+	}
+}
 
+func Tab_Code() gui.Layout {
+	return gui.Layout{editor}
+}
+
+func View() []gui.Widget {
+	About()
+
+	// TODO: let the user change the contents of the file
+	//		 and actually show the file, not just the marshal of the config struct
+	editor.Text(config.ToString()) 	
 	viewport := []gui.Widget{
 		gui.TabBar().TabItems(
-			gui.TabItem("Visual").Layout(
-				gui.SplitLayout(gui.DirectionHorizontal, split, gui.Layout{
-					list,
-				}, gui.Layout{
-					gui.Label(option),
-				}),
-			),
-			gui.TabItem("Code").Layout(
-				editor,
-			),
+			gui.TabItem("Visual").Layout(Tab_Visual()),
+			gui.TabItem("Code").Layout(Tab_Code()),
 		),
 	}
 
@@ -70,20 +81,19 @@ func View() []gui.Widget {
 
 func InitUi() {
 	config.Parse(os.Args[1])
+
 	for k := range config.Map {
 		options = append(options, strings.Title(fmt.Sprintf("%s", k)))
 	}
 
 	option = options[0]
 	list = gui.ListBox("Config Options", options)
-	list.OnChange(func(selectedIndex int) {
-		option = options[selectedIndex]
+	list.OnChange(func(idx int) {
+		option = options[idx]
 	})
 
 	editor = gui.CodeEditor().
-		ShowWhitespaces(true).
-		TabSize(4).
-		Border(true)
+		ShowWhitespaces(false).
+		TabSize(4)
 }
-
 
