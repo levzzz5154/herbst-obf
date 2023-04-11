@@ -29,8 +29,8 @@ func (c* Config) Parse(file string) {
 	contents, err := os.ReadFile(file)
 	errors.Handle(true, err)
 
-	// err = yaml.Unmarshal(contents, &c.Config)
-	// errors.Handle(true, err)
+	err = yaml.Unmarshal(contents, &c.Map)
+	errors.Handle(true, err)
 
 	m := make(map[interface{}]interface{})
 	err = yaml.Unmarshal(contents, &m)
