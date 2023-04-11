@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/AllenDang/giu v0.6.2
 	github.com/AllenDang/imgui-go v1.12.1-0.20220322114136-499bbf6a42ad
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
@@ -17,5 +18,4 @@ require (
 	golang.org/x/image v0.5.0 // indirect
 	golang.org/x/sys v0.1.0 // indirect
 	gopkg.in/eapache/queue.v1 v1.1.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
