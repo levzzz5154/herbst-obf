@@ -1,0 +1,89 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"strings"
+
+	gui "github.com/AllenDang/giu"
+)
+
+var (
+	split float32 = 200
+	about         = false
+
+	options []string
+	option  string
+
+	editor *gui.CodeEditorWidget
+	list   *gui.ListBoxWidget
+	config Config
+)
+
+func MenuBar() *gui.MenuBarWidget {
+	return gui.MenuBar().Layout(
+		gui.Menu("File").Layout(),
+		gui.Menu("Edit").Layout(),
+		gui.Menu("Help").Layout(
+			gui.MenuItem("About").OnClick(func() {
+				about = true
+			}),
+		),
+	)
+}
+
+func View() []gui.Widget {
+	if about {
+		popup := gui.Window("About")
+		popup.Size(290, 140)
+		popup.Layout(
+			gui.Align(gui.AlignCenter).To(
+				gui.Label("About").Font(gui.GetDefaultFonts()[0].SetSize(28)),
+				gui.Separator(),
+				gui.Label(Version()),
+				gui.Separator(),
+				gui.Label("Obfuscator for November Client"),
+			),
+		)
+		about = popup.HasFocus()
+	}
+
+	editor.Text(config.ToString())
+
+	viewport := []gui.Widget{
+		gui.TabBar().TabItems(
+			gui.TabItem("Visual").Layout(
+				gui.SplitLayout(gui.DirectionHorizontal, split, gui.Layout{
+					list,
+				}, gui.Layout{
+					gui.Label(option),
+				}),
+			),
+			gui.TabItem("Code").Layout(
+				editor,
+			),
+		),
+	}
+
+	return append([]gui.Widget{MenuBar()}, viewport...)
+}
+
+func InitUi() {
+	config.Parse(os.Args[1])
+	for k := range config.Map {
+		options = append(options, strings.Title(fmt.Sprintf("%s", k)))
+	}
+
+	option = options[0]
+	list = gui.ListBox("Config Options", options)
+	list.OnChange(func(selectedIndex int) {
+		option = options[selectedIndex]
+	})
+
+	editor = gui.CodeEditor().
+		ShowWhitespaces(true).
+		TabSize(4).
+		Border(true)
+}
+
+
