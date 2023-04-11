@@ -5,7 +5,8 @@ WINDOWS := -s -w -H=windowsgui -extldflags=-static
 # Linux and MacOS
 LINUX := -s -w
 
-LDFLAGS := "${WINDOWS} -X main.COMMIT=${commit} -X main.BRANCH=${branch}"
+# using LINUX flags works for me on windows too
+LDFLAGS := "${LINUX} -X main.COMMIT=${commit} -X main.BRANCH=${branch}"
 FLAGS :=
 
 
