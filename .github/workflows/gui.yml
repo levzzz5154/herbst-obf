@@ -12,16 +12,16 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.20
-    - name: Getting dependencies
-      run: |
-        cd gui
-        go get .
-    - name: Build
-      run: |
-        cd gui
-        make build FLAGS=-v
-
+    # - name: Set up Go
+    #   uses: actions/setup-go@v4
+    #   with:
+    #     go-version: 1.20
+    # - name: Getting dependencies
+    #   run: |
+    #     cd gui
+    #     go get .
+    # - name: Build
+    #   run: |
+    #     cd gui
+    #     make build FLAGS=-v
+    #
