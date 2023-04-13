@@ -60,23 +60,24 @@ func Tab_Visual() gui.Layout {
 }
 
 func Tab_Code() gui.Layout {
+	// TODO: let the user change the contents of the file
+	//		 and actually show the file, not just the marshal of the config struct
+	editor.Text(config.ToString())
+
 	return gui.Layout{editor}
 }
 
 func View() []gui.Widget {
 	About()
 
-	// TODO: let the user change the contents of the file
-	//		 and actually show the file, not just the marshal of the config struct
-	editor.Text(config.ToString()) 	
-	viewport := []gui.Widget{
+	viewport := []gui.Widget{MenuBar(),
 		gui.TabBar().TabItems(
 			gui.TabItem("Visual").Layout(Tab_Visual()),
 			gui.TabItem("Code").Layout(Tab_Code()),
 		),
 	}
 
-	return append([]gui.Widget{MenuBar()}, viewport...)
+	return viewport
 }
 
 func InitUi() {
@@ -94,7 +95,6 @@ func InitUi() {
 
 	editor = gui.CodeEditor().
 		ShowWhitespaces(false).
-		TabSize(4)
+		TabSize(2)
 }
-
 
