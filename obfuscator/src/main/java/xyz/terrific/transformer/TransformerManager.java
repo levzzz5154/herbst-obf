@@ -2,6 +2,7 @@ package xyz.terrific.transformer;
 
 import xyz.terrific.Main;
 import xyz.terrific.config.ConfigManager;
+import xyz.terrific.transformer.annotation.Exclude;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.JVM;
 import xyz.terrific.util.Logger;
@@ -21,7 +22,7 @@ public class TransformerManager {
         try {
             JVM.getAllClassesInPackage("xyz.terrific.transformer.transformers")
                     .forEach((clazz) -> {
-                        if (!Transformer.class.isAssignableFrom(clazz)) {
+                        if (!Transformer.class.isAssignableFrom(clazz) || clazz.isAnnotationPresent(Exclude.class)) {
                             return;
                         }
 
@@ -42,7 +43,7 @@ public class TransformerManager {
 
 
     public static void runTransformers() {
-        for (Transformer transformer : TransformerManager.transformers()) {
+        for (Transformer transformer : transformers()) {
             String transformerConfig = transformer.getClass().getSimpleName().toLowerCase();
 
             Group group = transformer.getClass().getAnnotation(Group.class);
