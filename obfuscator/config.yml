@@ -19,8 +19,17 @@ transformers:
 #    enabled:    true
 #    complexity: 2 # 1-5
 #
-#  flow:
-#    enabled: true
+  flow:
+    enabled: true
+
+    shuffleBlocks: true
+    # size of instruction blocks
+    # less = more obfuscation, not recommended to set lower than 3
+    blockSizeMin: 4
+    blockSizeMax: 6
+
+    addFakeJumps: true
+    fakeJumpChancePercent: 10
 #    layers: 5 # 1-20, bigger the number the slower to obfuscate
 #
 #  minecraft:

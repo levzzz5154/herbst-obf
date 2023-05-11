@@ -3,16 +3,16 @@ package xyz.terrific.util;
 import java.security.SecureRandom;
 
 public class RandomUtil {
-    private static final SecureRandom random = new SecureRandom();
+    public static final SecureRandom random = new SecureRandom();
     private static String alphabet = "abcdefghijklmnopqrstuvwxyzüöäABCDEFGHIJKLMNOPQRSTUVWXYZÜÖÄ";
     private static int randomLength = 12;
 
 
-    public static String generateRandomString() {
-        return generateRandomString(getRandomLength());
+    public static String randomString() {
+        return randomString(getRandomLength());
     }
 
-    public static String generateRandomString(int length) {
+    public static String randomString(int length) {
         StringBuilder result = new StringBuilder();
         for (int i=0; i < length+1; i++) {
             result.append(alphabet.charAt(random.nextInt(alphabet.length())));

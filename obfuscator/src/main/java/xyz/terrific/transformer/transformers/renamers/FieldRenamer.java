@@ -21,7 +21,7 @@ public class FieldRenamer extends Transformer {
                 .filter(clazz -> !isExcluded(clazz.name))
                 .forEach(classNode ->
                         classNode.fields.forEach(field -> {
-                            String name = RandomUtil.generateRandomString();
+                            String name = RandomUtil.randomString();
 
                             Logger.getInstance().info((Object) "(%s.class) Renaming Field '%s' to '%s'", classNode.name, field.name, name);
 

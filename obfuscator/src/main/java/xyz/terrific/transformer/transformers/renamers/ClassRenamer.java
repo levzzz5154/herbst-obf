@@ -20,7 +20,7 @@ public class ClassRenamer extends Transformer {
         classes.stream()
                 .filter(clazz -> !isExcluded(clazz.name))
                 .forEach(classNode -> {
-                    String name = RandomUtil.generateRandomString();
+                    String name = RandomUtil.randomString();
                     remap.put(classNode.name, name);
 
                     Logger.getInstance().info((Object) "Renaming class '%s' to '%s'", ClassNodeUtils.getClassName(classNode.name), name);
