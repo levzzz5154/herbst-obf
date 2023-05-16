@@ -24,9 +24,6 @@ public class StringEncryptor extends Transformer {
                     classNode.methods.forEach(methodNode -> {
                         AtomicInteger count = new AtomicInteger();
                         methodNode.instructions.forEach(insnNode -> {
-                            if (RandomUtil.random.nextBoolean()) {
-                                methodNode.instructions.add(new InsnNode(NOP));
-                            }
                             if (insnNode instanceof LdcInsnNode ldcInsn && ldcInsn.cst instanceof String value) {
                                 var encrypted = encrypt(value, encrKey);
 
