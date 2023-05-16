@@ -14,7 +14,6 @@ import static org.objectweb.asm.Opcodes.*;
 
 @Group(name = "string")
 public class StringEncryptor extends Transformer {
-    int encrKey = RandomUtil.random.nextInt();
     @Override
     public void transform() {
         classes.stream()
@@ -24,13 +23,14 @@ public class StringEncryptor extends Transformer {
                     classNode.methods.forEach(methodNode -> {
                         AtomicInteger count = new AtomicInteger();
                         methodNode.instructions.forEach(insnNode -> {
+                            int encryptionKey = RandomUtil.random.nextInt();
                             if (insnNode instanceof LdcInsnNode ldcInsn && ldcInsn.cst instanceof String value) {
-                                var encrypted = encrypt(value, encrKey);
+                                var encrypted = encrypt(value, encryptionKey);
 
-                                System.out.println("Old: " + value + " New: " + encrypted + " decr: " + encrypt(encrypted, encrKey));
+                                System.out.println("Old: " + value + " Encrypted: " + encrypted);
                                 ((LdcInsnNode) insnNode).cst = encrypted;
                                 methodNode.instructions.insert(insnNode, new MethodInsnNode(INVOKESTATIC, classNode.name, decrMethod.name, decrMethod.desc, false));
-                                methodNode.instructions.insert(insnNode, new LdcInsnNode(encrKey));
+                                methodNode.instructions.insert(insnNode, new LdcInsnNode(encryptionKey));
                                 count.getAndIncrement();
                             }
                         });
