@@ -24,8 +24,8 @@ public class FakeJumpAdder extends Transformer {
                         AtomicInteger addedFakeJumps = new AtomicInteger();
                         final ArrayList<LabelNode> labels = new ArrayList<>();
                         methodNode.instructions.forEach(abstractInsnNode -> {
-                            if (abstractInsnNode instanceof LabelNode) {
-                                labels.add((LabelNode) abstractInsnNode);
+                            if (abstractInsnNode instanceof LabelNode labelNode) {
+                                labels.add(labelNode);
                             }
                         });
                         labels.remove(labels.size() - 1); // Remove the last label because it's after the RETURN insn

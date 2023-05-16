@@ -1,3 +1,4 @@
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 
 public class Main {
@@ -6,16 +7,33 @@ public class Main {
     private static final SecureRandom rand = new SecureRandom();
 
     public static void main(String[] args) {
-        
-
         for (int i=0; i < 10; i++) {
             System.out.println(a);
         }
-
         System.out.println();
         if (rand.nextBoolean()) {
             System.out.println("no way jump!");
         }
         System.out.println("Hello world!");
+
+        for (TestEnum i : TestEnum.values()) {
+            System.out.println(i.toString());
+        }
+    }
+
+    public static String encrypt(String value, int key) {
+        int newKey = (value.length() * value.length()) ^ key;
+
+        char k1 = (char) (newKey & 0xFFFF);
+        char k2 = (char) ((newKey >> 16) & 0xFFFF);
+
+        char[] chars = value.toCharArray();
+        char[] output = new char[chars.length];
+
+        for (int j = 0; j < chars.length; j++) {
+            char i = chars[j];
+            output[j] = (char) (i ^ k1 ^ k2);
+        }
+        return new String(output);
     }
 }
