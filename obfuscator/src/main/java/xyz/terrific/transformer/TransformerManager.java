@@ -11,9 +11,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TransformerManager {
-    private static final List<Transformer> transformers = new ArrayList<>();
+    private static List<Transformer> transformers = new ArrayList<>();
     private static boolean shouldLog;
 
     public TransformerManager(boolean shouldLog) {
@@ -33,7 +34,30 @@ public class TransformerManager {
                         }
                     });
         } catch (Exception e) {
-            Logger.getInstance().error("Failed to load modifiers");
+            Logger.getInstance().error("Failed to load transformers");
+        }
+        reorderTransformers();
+    }
+
+    private static void reorderTransformers() {
+        var orderList = (List<String>) Main.getConfigManager().getTransformerConfig().safeGet("order", null);
+        if (orderList == null) {
+            Logger.getInstance().info(TransformerManager.class.getSimpleName(), "No order specified");
+            return;
+        }
+        transformers = transformers.stream()
+                .sorted((o1, o2) -> {
+                    if (o1.equals(o2)) return 0;
+                    final var name1 = o1.getClass().getSimpleName().toLowerCase();
+                    final var name2 = o2.getClass().getSimpleName().toLowerCase();
+                    return orderList.indexOf(name1) - orderList.indexOf(name2);
+                })
+                .collect(Collectors.toList());
+
+        Logger.getInstance().info(TransformerManager.class.getSimpleName(), "Specified order: ");
+        for (int j = 0; j < transformers.size(); j++) {
+            Transformer i = transformers.get(j);
+            Logger.getInstance().info(TransformerManager.class.getSimpleName(), "#" + j + " " + i.getClass().getSimpleName());
         }
     }
 

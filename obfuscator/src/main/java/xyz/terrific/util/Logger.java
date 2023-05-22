@@ -108,7 +108,7 @@ public class Logger {
      * @param message message to log
      */
     public void info(Class<?> caller, Object... message) {
-        info(caller.getName(), message);
+        info(caller.getSimpleName(), message);
     }
     /**
      * info
