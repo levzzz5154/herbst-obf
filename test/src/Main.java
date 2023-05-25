@@ -5,6 +5,7 @@ import java.util.Date;
 public class Main {
     private static final String x = "st";
     private static final String a = "Te" + x;
+    private static final String someTestString = encrypt("fasdfh", 3421);
     private static final SecureRandom rand = new SecureRandom();
 
     public static void main(String[] args) {
