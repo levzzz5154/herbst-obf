@@ -3,6 +3,7 @@ output: "%name%.obf.jar"
 
 transformers:
   order:
+    - linenumberremover
     - stringencryptor
     - blockshuffler
     - fakejumpadder
@@ -19,8 +20,8 @@ transformers:
 #    localVariables: true  # Rename local variables
 #    enums: FULL   # NONE = Don't rename enums, FULL = Rename enum, TO_STRING = Rename enum, but override the toString() call
 #
-#  removers:
-#    lineNumbers: true
+  removers:
+    lineNumbers: true
 #    generics:    false
 #
   string: # More options?

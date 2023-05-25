@@ -74,8 +74,12 @@ public class TransformerManager {
             if (group != null) {
                 transformerConfig = group.name().toLowerCase();
             }
+            var mappedCfg = new ConfigManager.Configs<>((HashMap<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig));
+            if (group != null && !mappedCfg.safeGet("enabled", true)) {
+                continue;
+            }
 
-            if (transformer.parseConfig(new ConfigManager.Configs<>((HashMap<String, Object>) Main.getConfigManager().getTransformerConfig().get(transformerConfig)))) {
+            if (transformer.parseConfig(mappedCfg)) {
                 Logger.getInstance().info((Object) "Running %s", transformer.getClass().getSimpleName());
                 transformer.transform();
             }
