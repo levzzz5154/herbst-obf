@@ -28,9 +28,21 @@ public class StringEncryptor extends Transformer {
                                 var encrypted = encrypt(value, encryptionKey);
 
                                 System.out.println("Old: " + value + " Encrypted: " + encrypted);
-                                ((LdcInsnNode) insnNode).cst = encrypted;
-                                methodNode.instructions.insert(insnNode, new MethodInsnNode(INVOKESTATIC, classNode.name, decrMethod.name, decrMethod.desc, false));
-                                methodNode.instructions.insert(insnNode, new LdcInsnNode(encryptionKey));
+                                if (RandomUtil.random.nextBoolean()) {
+                                    ((LdcInsnNode) insnNode).cst = encrypted;
+                                    methodNode.instructions.insert(insnNode, new MethodInsnNode(INVOKESTATIC, classNode.name, decrMethod.name, decrMethod.desc, false));
+                                    methodNode.instructions.insert(insnNode, new LdcInsnNode(encryptionKey));
+                                }
+                                else {
+                                    final FieldNode encryptedString = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), "Ljava/lang/String;", null, encrypted);
+                                    classNode.fields.add(encryptedString);
+                                    methodNode.instructions.insert(insnNode, new MethodInsnNode(INVOKESTATIC, classNode.name, decrMethod.name, decrMethod.desc, false));
+                                    methodNode.instructions.insert(insnNode, new LdcInsnNode(encryptionKey));
+                                    methodNode.instructions.insert(insnNode, new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, encryptedString.name, encryptedString.desc));
+                                    methodNode.instructions.remove(insnNode);
+                                }
+
+
                                 count.getAndIncrement();
                             }
                         });
@@ -62,15 +74,15 @@ public class StringEncryptor extends Transformer {
         var labelK = new LabelNode();
         var labelL = new LabelNode();
 
-        decrMethod.localVariables.add(new LocalVariableNode("value", "Ljava/lang/String;", null, labelA, labelL, 0));
-        decrMethod.localVariables.add(new LocalVariableNode("key", "I", null, labelA, labelL, 1));
-        decrMethod.localVariables.add(new LocalVariableNode("newKey", "I", null, labelA, labelL, 2));
-        decrMethod.localVariables.add(new LocalVariableNode("k1", "I", null, labelB, labelL, 3));
-        decrMethod.localVariables.add(new LocalVariableNode("k2", "I", null, labelC, labelL, 4));
-        decrMethod.localVariables.add(new LocalVariableNode("chars", "Ljava/lang/Object;", null, labelD, labelL, 5));
-        decrMethod.localVariables.add(new LocalVariableNode("output", "Ljava/lang/Object;", null, labelE, labelL, 6));
-        decrMethod.localVariables.add(new LocalVariableNode("j", "I", null, labelF, labelL, 7));
-        decrMethod.localVariables.add(new LocalVariableNode("i", "I", null, labelH, labelL, 8));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "Ljava/lang/String;", null, labelA, labelL, 0));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelA, labelL, 1));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelA, labelL, 2));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelB, labelL, 3));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelC, labelL, 4));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "Ljava/lang/Object;", null, labelD, labelL, 5));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "Ljava/lang/Object;", null, labelE, labelL, 6));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelF, labelL, 7));
+        decrMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), "I", null, labelH, labelL, 8));
 
         insnList.add(labelA);
         insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));

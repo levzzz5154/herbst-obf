@@ -1,5 +1,6 @@
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
+import java.util.Date;
 
 public class Main {
     private static final String x = "st";
@@ -7,6 +8,7 @@ public class Main {
     private static final SecureRandom rand = new SecureRandom();
 
     public static void main(String[] args) {
+        long start = System.nanoTime();
         for (int i=0; i < 10; i++) {
             System.out.println(a);
         }
@@ -19,6 +21,7 @@ public class Main {
         for (TestEnum i : TestEnum.values()) {
             System.out.println(i.toString());
         }
+        System.out.println("micros: " + (System.nanoTime() - start));
     }
 
     public static String encrypt(String value, int key) {

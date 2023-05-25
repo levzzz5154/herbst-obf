@@ -6,6 +6,7 @@ transformers:
     - stringencryptor
     - blockshuffler
     - fakejumpadder
+    - fieldvalueextractor
     - classrenamer
     - fieldrenamer
 
@@ -35,8 +36,10 @@ transformers:
     blockSizeMin: 8
     blockSizeMax: 10
 
-    addFakeJumps: false
-    fakeJumpChancePercent: 10
+    addFakeJumps: true
+    fakeJumpChancePercent: 5
+
+    extractFieldValues: true # extracts values of static fields into a static block
 #    layers: 5 # 1-20, bigger the number the slower to obfuscate
 #
 #  minecraft:
