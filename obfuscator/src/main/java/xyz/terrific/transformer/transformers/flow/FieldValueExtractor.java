@@ -8,6 +8,7 @@ import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Exclude;
 import xyz.terrific.transformer.annotation.Group;
+import xyz.terrific.util.Logger;
 
 @Group(name = "flow")
 public class FieldValueExtractor extends Transformer {
@@ -28,6 +29,7 @@ public class FieldValueExtractor extends Transformer {
                 var firstInsn = clinitMethod.instructions.get(0);
                 clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
                 clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
+                Logger.getInstance().info(FieldValueExtractor.class, "Extracted field " + fieldNode.name + " from " + classNode.name);
             }
         });
     }

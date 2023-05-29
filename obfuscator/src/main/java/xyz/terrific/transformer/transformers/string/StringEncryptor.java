@@ -20,27 +20,23 @@ public class StringEncryptor extends Transformer {
                 .filter(classNode -> !isExcluded(classNode.name))
                 .forEach(classNode -> {
                     var decrMethod = makeDecryptMethod();
+                    AtomicInteger count = new AtomicInteger();
+                    var clinitMethod = classNode.methods.stream()
+                            .filter(mthd -> mthd.name.equals("<clinit>")
+                                    && mthd.desc.equals("()V")
+                            ).findFirst().get();
+
+                    // encrypt fields
+                    for (FieldNode fieldNode : classNode.fields) {
+                        if (!(fieldNode.value instanceof String value)) continue;
+                        fieldNode.value = null;
+
+                        var firstInsn = clinitMethod.instructions.get(0);
+                        clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
+                        clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
+                        count.getAndIncrement();
+                    }
                     classNode.methods.forEach(methodNode -> {
-                        AtomicInteger count = new AtomicInteger();
-                        var clinitMethod = classNode.methods.stream()
-                                .filter(mthd -> mthd.name.equals("<clinit>")
-                                        && mthd.desc.equals("()V")
-                                ).findFirst().get();
-
-                        // encrypt fields
-                        for (FieldNode fieldNode : classNode.fields) {
-                            if (fieldNode.value == null) continue;
-                            int encryptionKey = RandomUtil.random.nextInt();
-                            var value = fieldNode.value;
-                            fieldNode.value = null;
-
-                            var firstInsn = clinitMethod.instructions.get(0);
-                            clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
-                            clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(encryptionKey));
-                            clinitMethod.instructions.insertBefore(firstInsn, new MethodInsnNode(INVOKESTATIC, classNode.name, decrMethod.name, decrMethod.desc, false));
-                            count.getAndIncrement();
-                        }
-
                         // encrypt LDC instructions in methods
                         methodNode.instructions.forEach(insnNode -> {
                             int encryptionKey = RandomUtil.random.nextInt();

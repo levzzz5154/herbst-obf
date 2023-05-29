@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static xyz.terrific.util.asm.InsnUtil.makeRandomRealJump;
+
 @Group(name = "flow")
 public class BlockShuffler extends Transformer {
 
@@ -73,34 +75,6 @@ public class BlockShuffler extends Transformer {
                         }
                     });
                 });
-    }
-
-    private InsnList makeRandomRealJump(final ClassNode classNode, final LabelNode labelNode) {
-        return switch(RandomUtil.random.nextInt(2)) {
-            case 0 -> {
-                final FieldNode zeroField = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, 0);
-                classNode.fields.add(zeroField);
-
-                final InsnList list = new InsnList();
-                list.add(new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, zeroField.name, zeroField.desc));
-                list.add(new JumpInsnNode(Opcodes.IFEQ, labelNode));
-                yield list;
-            }
-            case 1 -> {
-                final FieldNode nonZeroField = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, RandomUtil.random.nextInt(1, Integer.MAX_VALUE));
-                classNode.fields.add(nonZeroField);
-
-                final InsnList list = new InsnList();
-                list.add(new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, nonZeroField.name, nonZeroField.desc));
-                list.add(new JumpInsnNode(Opcodes.IFNE, labelNode));
-                yield list;
-            }
-            default -> {
-                final InsnList list = new InsnList();
-                list.add(new JumpInsnNode(Opcodes.GOTO, labelNode));
-                yield list;
-            }
-        };
     }
 
     private static void addInsnListToList(final List<AbstractInsnNode> list, final InsnList insnList) {
