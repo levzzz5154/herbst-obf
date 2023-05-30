@@ -20,7 +20,9 @@ public class FakeJumpAdder extends Transformer {
         classes.stream()
                 .filter(classNode -> !isExcluded(classNode.name))
                 .forEach(classNode -> {
-                    classNode.methods.forEach(methodNode -> {
+                    classNode.methods.stream()
+                            .filter(methodNode -> methodNode.instructions.size() > 0)
+                            .forEach(methodNode -> {
                         AtomicInteger addedFakeJumps = new AtomicInteger();
                         final ArrayList<LabelNode> labels = new ArrayList<>();
                         methodNode.instructions.forEach(abstractInsnNode -> {

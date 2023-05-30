@@ -21,21 +21,25 @@ public class StringEncryptor extends Transformer {
                 .forEach(classNode -> {
                     var decrMethod = makeDecryptMethod();
                     AtomicInteger count = new AtomicInteger();
-                    var clinitMethod = classNode.methods.stream()
+                    final var clMethod = classNode.methods.stream()
                             .filter(mthd -> mthd.name.equals("<clinit>")
                                     && mthd.desc.equals("()V")
-                            ).findFirst().get();
+                            ).findFirst();
 
-                    // encrypt fields
-                    for (FieldNode fieldNode : classNode.fields) {
-                        if (!(fieldNode.value instanceof String value)) continue;
-                        fieldNode.value = null;
+                    if (clMethod.isPresent()) {
+                        final var clinitMethod = clMethod.get();
+                        // encrypt fields
+                        for (FieldNode fieldNode : classNode.fields) {
+                            if (!(fieldNode.value instanceof String value)) continue;
+                            fieldNode.value = null;
 
-                        var firstInsn = clinitMethod.instructions.get(0);
-                        clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
-                        clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
-                        count.getAndIncrement();
+                            var firstInsn = clinitMethod.instructions.get(0);
+                            clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
+                            clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
+                            count.getAndIncrement();
+                        }
                     }
+
                     classNode.methods.forEach(methodNode -> {
                         // encrypt LDC instructions in methods
                         methodNode.instructions.forEach(insnNode -> {

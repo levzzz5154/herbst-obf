@@ -15,21 +15,24 @@ public class FieldValueExtractor extends Transformer {
     @Override
     public void transform() {
         classes.stream().filter(classNode -> !isExcluded(classNode.name)).forEach(classNode -> {
-            var clinitMethod = classNode.methods.stream()
+            var clMethod = classNode.methods.stream()
                     .filter(methodNode -> methodNode.name.equals("<clinit>")
                             && methodNode.desc.equals("()V")
-                    ).findFirst().get();
+                    ).findFirst();
 
-            for (FieldNode fieldNode : classNode.fields) {
-                if (fieldNode.value == null) continue;
-                if ((fieldNode.access & Opcodes.ACC_STATIC) == 0) continue;
-                var value = fieldNode.value;
-                fieldNode.value = null;
+            if (clMethod.isPresent()) {
+                final var clinitMethod = clMethod.get();
+                for (FieldNode fieldNode : classNode.fields) {
+                    if (fieldNode.value == null) continue;
+                    if ((fieldNode.access & Opcodes.ACC_STATIC) == 0) continue;
+                    var value = fieldNode.value;
+                    fieldNode.value = null;
 
-                var firstInsn = clinitMethod.instructions.get(0);
-                clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
-                clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
-                Logger.getInstance().info(FieldValueExtractor.class, "Extracted field " + fieldNode.name + " from " + classNode.name);
+                    var firstInsn = clinitMethod.instructions.get(0);
+                    clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
+                    clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
+                    Logger.getInstance().info(FieldValueExtractor.class, "Extracted field " + fieldNode.name + " from " + classNode.name);
+                }
             }
         });
     }
