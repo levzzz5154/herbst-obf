@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static xyz.terrific.util.asm.InsnUtil.makeRandomRealJump;
+import static xyz.terrific.util.asm.InsnUtil.makeRealJump;
 
 @Group(name = "flow")
 public class BlockShuffler extends Transformer {
@@ -40,7 +40,7 @@ public class BlockShuffler extends Transformer {
         linkChunks(classNode, insnChunks);
         methodNode.instructions.clear();
         // add a jump to the first chunk
-        methodNode.instructions.add(makeRandomRealJump(classNode, (LabelNode) insnChunks.get(0).get(0)));
+        methodNode.instructions.add(makeRealJump(classNode, (LabelNode) insnChunks.get(0).get(0)));
         // shuffle the chunks, but keep the position of the last one
         shuffleChunks(insnChunks);
 
@@ -85,7 +85,7 @@ public class BlockShuffler extends Transformer {
             if ((i + 1) >= insnChunks.size()) continue;
             final ArrayList<AbstractInsnNode> nextChunk = insnChunks.get(i+1);
 
-            addInsnListToList(chunk, makeRandomRealJump(classNode, (LabelNode) nextChunk.get(0)));
+            addInsnListToList(chunk, makeRealJump(classNode, (LabelNode) nextChunk.get(0)));
         }
     }
     public static void shuffleChunks(final ArrayList<ArrayList<AbstractInsnNode>> insnChunks) {

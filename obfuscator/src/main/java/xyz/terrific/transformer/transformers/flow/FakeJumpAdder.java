@@ -7,6 +7,7 @@ import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.Logger;
 import xyz.terrific.util.RandomUtil;
+import xyz.terrific.util.asm.InsnUtil;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,7 +24,7 @@ public class FakeJumpAdder extends Transformer {
                     classNode.methods.stream()
                             .filter(methodNode -> methodNode.instructions.size() > 0)
                             .forEach(methodNode -> {
-                        AtomicInteger addedFakeJumps = new AtomicInteger();
+                        final var addedFakeJumps = new AtomicInteger();
                         final ArrayList<LabelNode> labels = new ArrayList<>();
                         methodNode.instructions.forEach(abstractInsnNode -> {
                             if (abstractInsnNode instanceof LabelNode labelNode) {
@@ -35,7 +36,7 @@ public class FakeJumpAdder extends Transformer {
                         if (!labels.isEmpty()) {
                             methodNode.instructions.forEach(abstractInsnNode -> {
                                 if (!(abstractInsnNode instanceof LabelNode) && RandomUtil.random.nextInt(100) < fakeJumpChancePercent) {
-                                    addAFakeJump(classNode, methodNode, labels, abstractInsnNode);
+                                    methodNode.instructions.insertBefore(abstractInsnNode, InsnUtil.makeFakeJump(classNode, labels));
                                     addedFakeJumps.getAndIncrement();
                                 }
                             });
@@ -44,39 +45,6 @@ public class FakeJumpAdder extends Transformer {
                         Logger.getInstance().info(FakeJumpAdder.class.getSimpleName(),"added " + addedFakeJumps + " fake jumps: " + classNode.name + "." + methodNode.name);
                     });
                 });
-    }
-
-    private void addAFakeJump(ClassNode classNode, MethodNode methodNode, ArrayList<LabelNode> labels, AbstractInsnNode abstractInsnNode) {
-        switch (RandomUtil.random.nextInt(3)) {
-            case 0:
-                final FieldNode fieldVal1 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, RandomUtil.random.nextInt(1, Integer.MAX_VALUE));
-                classNode.fields.add(fieldVal1);
-                methodNode.instructions.insertBefore(abstractInsnNode, new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, fieldVal1.name, fieldVal1.desc));
-                methodNode.instructions
-                        .insertBefore(abstractInsnNode, new JumpInsnNode(Opcodes.IFEQ, labels.get(RandomUtil.random.nextInt(labels.size()))));
-                break;
-            case 1:
-                final FieldNode fieldVal0 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, 0);
-                classNode.fields.add(fieldVal0);
-                methodNode.instructions.insertBefore(abstractInsnNode, new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, fieldVal0.name, fieldVal0.desc));
-                methodNode.instructions
-                        .insertBefore(abstractInsnNode, new JumpInsnNode(Opcodes.IFNE, labels.get(RandomUtil.random.nextInt(labels.size()))));
-                break;
-            case 2:
-                final FieldNode field3 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, RandomUtil.random.nextInt());
-                final FieldNode field4 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(20), "I", null, RandomUtil.random.nextInt());
-                classNode.fields.add(field3);
-                classNode.fields.add(field4);
-
-                methodNode.instructions.insertBefore(abstractInsnNode, new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, field3.name, field3.desc));
-                methodNode.instructions.insertBefore(abstractInsnNode, new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, field4.name, field4.desc));
-                int opcode;
-                if (field3.value == field4.value) opcode = Opcodes.IF_ICMPNE;
-                else opcode = Opcodes.IF_ICMPEQ;
-
-                methodNode.instructions.insertBefore(abstractInsnNode, new JumpInsnNode(opcode, labels.get(RandomUtil.random.nextInt(labels.size()))));
-                break;
-        }
     }
 
     @Override

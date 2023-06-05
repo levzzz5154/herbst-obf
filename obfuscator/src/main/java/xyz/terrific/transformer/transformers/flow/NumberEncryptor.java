@@ -15,14 +15,14 @@ public class NumberEncryptor extends Transformer {
             classNode.methods.forEach(methodNode -> {
                 for (int i = 0; i < 1; i++) {
                     methodNode.instructions.forEach(insnNode -> {
-                        obfNumberConstants(methodNode, insnNode);
+                        obfNumberConstant(methodNode, insnNode);
                     });
                 }
             });
         });
     }
 
-    private static void obfNumberConstants(MethodNode methodNode, AbstractInsnNode insnNode) {
+    private static void obfNumberConstant(MethodNode methodNode, AbstractInsnNode insnNode) {
         switch (insnNode) {
             case LdcInsnNode ldcInsn && ldcInsn.cst instanceof Integer -> {
                 final var key = RandomUtil.random.nextInt();

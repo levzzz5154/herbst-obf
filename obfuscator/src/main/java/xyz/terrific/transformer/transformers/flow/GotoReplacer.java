@@ -9,7 +9,7 @@ import xyz.terrific.util.Logger;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static xyz.terrific.util.asm.InsnUtil.makeRandomRealJump;
+import static xyz.terrific.util.asm.InsnUtil.makeRealJump;
 
 @Group(name = "flow")
 public class GotoReplacer extends Transformer {
@@ -21,7 +21,7 @@ public class GotoReplacer extends Transformer {
                 methodNode.instructions.forEach(insnNode -> {
                     if (insnNode instanceof JumpInsnNode gotoInsn && insnNode.getOpcode() == Opcodes.GOTO) {
 
-                        methodNode.instructions.insert(insnNode, makeRandomRealJump(classNode, gotoInsn.label));
+                        methodNode.instructions.insert(insnNode, makeRealJump(classNode, gotoInsn.label));
                         methodNode.instructions.remove(insnNode);
                         count.incrementAndGet();
                     }
