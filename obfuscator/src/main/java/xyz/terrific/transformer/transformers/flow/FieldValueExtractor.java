@@ -22,6 +22,7 @@ public class FieldValueExtractor extends Transformer {
 
             if (clMethod.isPresent()) {
                 final var clinitMethod = clMethod.get();
+                var count = 0;
                 for (FieldNode fieldNode : classNode.fields) {
                     if (fieldNode.value == null) continue;
                     if ((fieldNode.access & Opcodes.ACC_STATIC) == 0) continue;
@@ -31,8 +32,9 @@ public class FieldValueExtractor extends Transformer {
                     var firstInsn = clinitMethod.instructions.get(0);
                     clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
                     clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
-                    Logger.getInstance().info(FieldValueExtractor.class, "Extracted field " + fieldNode.name + " from " + classNode.name);
+                    count++;
                 }
+                Logger.getInstance().info(FieldValueExtractor.class, "Extracted " + count + " fields from " + classNode.name);
             }
         });
     }
