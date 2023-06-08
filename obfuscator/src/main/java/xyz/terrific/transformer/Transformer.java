@@ -4,12 +4,10 @@ import org.objectweb.asm.commons.ClassRemapper;
 import org.objectweb.asm.commons.SimpleRemapper;
 import org.objectweb.asm.tree.ClassNode;
 import xyz.terrific.JarObfuscator;
+import xyz.terrific.Main;
 import xyz.terrific.config.ConfigManager;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class Transformer {
@@ -26,7 +24,9 @@ public abstract class Transformer {
 
 
     protected boolean isExcluded(String name) {
-        // TODO: get list of exclusion from configs
+        final var config = (List<String>) Main.getConfigManager().getConfig().safeGet("exclude", null);
+        if (config == null) return false;
+        if (config.contains(name)) return true;
         return false;
     }
 

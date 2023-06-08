@@ -1,8 +1,12 @@
 input: "test.jar"
 output: "%name%.obf.jar"
 
+exclude: # list of class exclusions
+#  - "Main"
+
 transformers:
   order:
+    - fieldshuffler
     - linenumberremover
     - stringencryptor
     - blockshuffler
@@ -33,13 +37,13 @@ transformers:
   flow:
     enabled: true
 
-    shuffleBlocks: false
+    shuffleBlocks: true
     # size of instruction blocks
     # less = more obfuscation, not recommended to set lower than 3
     blockSizeMin: 8
     blockSizeMax: 10
 
-    addFakeJumps: false
+    addFakeJumps: true
     fakeJumpChancePercent: 5
 
     extractFieldValues: true # extracts values of static fields into a static block
@@ -50,7 +54,7 @@ transformers:
 #  minecraft:
 #    removeOptifineObfIds: true # remove the CF___ thing in the fields optifine leaves behind
 #
-#  shuffler:
+  shuffler:
 #    methods: false
-#    fields: true
+    fields: true
 # ...
