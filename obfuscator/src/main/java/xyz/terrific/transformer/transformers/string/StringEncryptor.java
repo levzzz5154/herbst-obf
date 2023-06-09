@@ -5,6 +5,7 @@ import org.objectweb.asm.tree.*;
 import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
+import xyz.terrific.util.ClassUtil;
 import xyz.terrific.util.RandomUtil;
 
 import java.nio.charset.StandardCharsets;
@@ -21,13 +22,7 @@ public class StringEncryptor extends Transformer {
                 .forEach(classNode -> {
                     var decrMethod = makeDecryptMethod();
                     AtomicInteger count = new AtomicInteger();
-                    final var clMethod = classNode.methods.stream()
-                            .filter(mthd -> mthd.name.equals("<clinit>")
-                                    && mthd.desc.equals("()V")
-                            ).findFirst();
-
-                    if (clMethod.isPresent()) {
-                        final var clinitMethod = clMethod.get();
+                    ClassUtil.findClinit(classNode).ifPresent(clinitMethod -> {
                         // encrypt fields
                         for (FieldNode fieldNode : classNode.fields) {
                             if (!(fieldNode.value instanceof String value)) continue;
@@ -36,9 +31,8 @@ public class StringEncryptor extends Transformer {
                             var firstInsn = clinitMethod.instructions.get(0);
                             clinitMethod.instructions.insertBefore(firstInsn, new LdcInsnNode(value));
                             clinitMethod.instructions.insertBefore(firstInsn, new FieldInsnNode(PUTSTATIC, classNode.name, fieldNode.name, fieldNode.desc));
-                            count.getAndIncrement();
                         }
-                    }
+                    });
 
                     classNode.methods.forEach(methodNode -> {
                         // encrypt LDC instructions in methods
@@ -67,9 +61,10 @@ public class StringEncryptor extends Transformer {
                             }
                         });
 
-                        System.out.println("encrypted strings: " + count.get());
                     });
                     classNode.methods.add(decrMethod);
+                    if (count.get() > 0)
+                        System.out.println("encrypted strings: " + count.get() + " at " + classNode.name);
                 });
     }
 

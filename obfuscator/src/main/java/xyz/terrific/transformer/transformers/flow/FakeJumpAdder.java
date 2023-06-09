@@ -24,7 +24,7 @@ public class FakeJumpAdder extends Transformer {
                     classNode.methods.stream()
                             .filter(methodNode -> methodNode.instructions.size() > 0)
                             .forEach(methodNode -> {
-                        final var addedFakeJumps = new AtomicInteger();
+                        final var fakeJumpCount = new AtomicInteger();
                         final ArrayList<LabelNode> labels = new ArrayList<>();
                         methodNode.instructions.forEach(abstractInsnNode -> {
                             if (abstractInsnNode instanceof LabelNode labelNode) {
@@ -37,12 +37,12 @@ public class FakeJumpAdder extends Transformer {
                             methodNode.instructions.forEach(abstractInsnNode -> {
                                 if (!(abstractInsnNode instanceof LabelNode) && RandomUtil.random.nextInt(100) < fakeJumpChancePercent) {
                                     methodNode.instructions.insertBefore(abstractInsnNode, InsnUtil.makeFakeJump(classNode, labels));
-                                    addedFakeJumps.getAndIncrement();
+                                    fakeJumpCount.getAndIncrement();
                                 }
                             });
                         }
-
-                        Logger.getInstance().info(FakeJumpAdder.class.getSimpleName(),"added " + addedFakeJumps + " fake jumps: " + classNode.name + "." + methodNode.name);
+                        if (fakeJumpCount.get() > 0)
+                            Logger.getInstance().info(FakeJumpAdder.class.getSimpleName(),"added " + fakeJumpCount + " fake jumps: " + classNode.name + "." + methodNode.name);
                     });
                 });
     }

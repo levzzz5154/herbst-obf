@@ -4,7 +4,7 @@ import xyz.terrific.JarObfuscator;
 import xyz.terrific.config.ConfigManager;
 import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
-import xyz.terrific.util.ClassNodeUtils;
+import xyz.terrific.util.ClassUtil;
 import xyz.terrific.util.Logger;
 import xyz.terrific.util.RandomUtil;
 
@@ -23,7 +23,7 @@ public class ClassRenamer extends Transformer {
                     String name = RandomUtil.randomString();
                     remap.put(classNode.name, name);
 
-                    Logger.getInstance().info((Object) "Renaming class '%s' to '%s'", ClassNodeUtils.getClassName(classNode.name), name);
+                    Logger.getInstance().info((Object) "Renaming class '%s' to '%s'", ClassUtil.getClassName(classNode.name), name);
 
                     if (JarObfuscator.getManifest() != null && JarObfuscator.getManifest().getMainAttributes().getValue("Main-Class").equals(classNode.name.replace("/", "."))) {
                         JarObfuscator.getManifest().getMainAttributes().putValue("Main-Class", name.replace("/", "."));

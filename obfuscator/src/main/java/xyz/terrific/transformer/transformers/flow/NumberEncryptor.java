@@ -14,15 +14,18 @@ public class NumberEncryptor extends Transformer {
     public void transform() {
         classes.stream().filter(classNode -> !isExcluded(classNode.name)).forEach(classNode -> {
             classNode.methods.forEach(methodNode -> {
+                var count = 0;
                 final var insnArray = methodNode.instructions.toArray();
                 for (AbstractInsnNode insnNode : insnArray) {
                     final var insnList = obfNumberConstant(insnNode);
                     if (insnList.size() > 0) {
-                        Logger.getInstance().info(NumberEncryptor.class, "replaced " + insnList.size() + " number constants at " + classNode.name + "." + methodNode.name);
                         methodNode.instructions.insert(insnNode, insnList);
                         methodNode.instructions.remove(insnNode);
+                        count++;
                     }
                 }
+                if (count > 0)
+                    Logger.getInstance().info(NumberEncryptor.class, "replaced " + count + " number constants at " + classNode.name + "." + methodNode.name);
             });
         });
     }
@@ -35,7 +38,7 @@ public class NumberEncryptor extends Transformer {
                 var encryptedValue = ((int) ldcInsn.cst) ^ key;
 
                 if (RandomUtil.random.nextBoolean()) {
-                    encryptedValue = Integer.reverse((int)ldcInsn.cst);
+                    encryptedValue = Integer.reverse(encryptedValue);
                     insnList.add(new LdcInsnNode(encryptedValue));
                     insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Integer", "reverse", "(I)I", false));
                 }
