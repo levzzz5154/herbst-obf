@@ -31,23 +31,25 @@ transformers:
 #    generics:    false
 #
   string: # More options?
-    enabled:    true
+    enabled: true
+    convertToCharArray: false
     complexity: 2 # 1-5
 #
   flow:
     enabled: true
 
-    shuffleBlocks: true
+    shuffleBlocks: false
     # size of instruction blocks
     # less = more obfuscation, not recommended to set lower than 3
     blockSizeMin: 8
     blockSizeMax: 10
 
-    addFakeJumps: true
+    addFakeJumps: false
     fakeJumpChancePercent: 5
 
     extractFieldValues: true # extracts values of static fields into a static block
-    encryptNumbers: true # encrypts numbers
+    addNativeAnnotation: true # adds an annotation for later native obfuscation
+    encryptNumbers: false # encrypts numbers
     replaceGotos: true # replaces goto's with random real jumps
 #    layers: 5 # 1-20, bigger the number the slower to obfuscate
 #
