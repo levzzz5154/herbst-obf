@@ -1,5 +1,6 @@
 package xyz.terrific.transformer.transformers.flow;
 
+import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -18,14 +19,50 @@ public class MethodExtractor extends Transformer {
             var methods = classNode.methods.toArray(new MethodNode[0]);
             for (MethodNode method : methods) {
                 method.instructions.forEach(insnNode -> {
-                    extractMethodCalls(classNode, method, insnNode);
+                    switch (insnNode) {
+                        case MethodInsnNode methodInsnNode -> {
+                            extractMethodInsn(classNode, method, insnNode);
+                        }
+                        case LdcInsnNode ldcInsnNode -> {
+                            extractLdcInsn(classNode, method, ldcInsnNode);
+                        }
+                        default -> {}
+                    }
                 });
             }
         });
     }
-    public static void extractMethodCalls(ClassNode classNode, MethodNode methodNode, AbstractInsnNode insnNode) {
+    public static void extractLdcInsn(ClassNode classNode, MethodNode methodNode, LdcInsnNode ldcInsn) {
+        final var leReturnDesc = getLdcDesc(ldcInsn);
+        final var exMethod = new MethodNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), "()" + leReturnDesc, null, null);
+
+        final var splitDesc = exMethod.desc.split("\\)");
+        final var returnInsn = getReturnInsn(splitDesc[1]);
+
+        final var startLabel = new LabelNode(new Label());
+        final var endLabel = new LabelNode(new Label());
+
+        exMethod.instructions.add(startLabel);
+        exMethod.instructions.add(ldcInsn.clone(null));
+        exMethod.instructions.add(returnInsn);
+        exMethod.instructions.add(endLabel);
+        classNode.methods.add(exMethod);
+        methodNode.instructions.insert(ldcInsn, new MethodInsnNode(Opcodes.INVOKESTATIC, classNode.name, exMethod.name, exMethod.desc));
+        methodNode.instructions.remove(ldcInsn);
+    }
+    public static String getLdcDesc(LdcInsnNode ldcInsn) {
+        return switch (ldcInsn.cst) {
+            case String ignored -> "Ljava/lang/String;";
+            case Integer ignored -> "I";
+            case Float ignored -> "F";
+            case Long ignored -> "J";
+            case Double ignored -> "D";
+            case Class ignored -> "Ljava/lang/Class;";
+            case Object ignored -> "Ljava/lang/Object;";
+        };
+    }
+    public static void extractMethodInsn(ClassNode classNode, MethodNode methodNode, AbstractInsnNode insnNode) {
         if (!(insnNode instanceof MethodInsnNode methodInsn)) return;
-        //if (methodInsn.getOpcode() != Opcodes.INVOKEVIRTUAL && methodInsn.getOpcode() != Opcodes.INVOKESTATIC && methodInsn.getOpcode() != Opcodes.INVOKESPECIAL) return;
 
         final var isStatic = methodInsn.getOpcode() == Opcodes.INVOKESTATIC;
         final var extractedMethodDesc = isStatic ? methodInsn.desc : "(L" + methodInsn.owner + ";" + methodInsn.desc.substring(1);
@@ -38,7 +75,7 @@ public class MethodExtractor extends Transformer {
         final var endLabel = new LabelNode(new Label());
 
         exMethod.instructions.add(startLabel);
-        exMethod.localVariables.addAll(parseDescToLocals(splitDesc[0].substring(1).toCharArray(), startLabel, endLabel, 0));
+        exMethod.localVariables.addAll(parseDescToLocals(splitDesc[0].substring(1).toCharArray(), startLabel, endLabel));
 
         for (LocalVariableNode localVariable : exMethod.localVariables) {
             exMethod.instructions.add(getVarInsn(localVariable.desc, localVariable.index));
@@ -51,7 +88,8 @@ public class MethodExtractor extends Transformer {
         methodNode.instructions.remove(insnNode);
     }
 
-    public static ArrayList<LocalVariableNode> parseDescToLocals(char[] charArray, LabelNode startLabel, LabelNode endLabel, int startIndex) {
+    public static ArrayList<LocalVariableNode> parseDescToLocals(char[] charArray, LabelNode startLabel, LabelNode endLabel) {
+        int startIndex = 0;
         StringBuilder localVarDesc = new StringBuilder();
         final var localVars = new ArrayList<LocalVariableNode>();
         var nowParsing = ParsingType.NOTHING;
