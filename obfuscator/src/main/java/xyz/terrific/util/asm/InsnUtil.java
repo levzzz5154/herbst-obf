@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public class InsnUtil {
     public static InsnList makeRealJump(final ClassNode classNode, final LabelNode labelNode) {
         final InsnList list = new InsnList();
-        switch(RandomUtil.random.nextInt(2)) {
+        switch(RandomUtil.random.nextInt(3)) {
             case 0 -> {
                 final FieldNode zeroField = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), "I", null, 0);
                 classNode.fields.add(zeroField);
@@ -24,8 +24,16 @@ public class InsnUtil {
                 list.add(new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, nonZeroField.name, nonZeroField.desc));
                 list.add(new JumpInsnNode(Opcodes.IFNE, labelNode));
             }
-            default -> {
-                list.add(new JumpInsnNode(Opcodes.GOTO, labelNode));
+            case 2 -> {
+                final FieldNode field3 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), "I", null, RandomUtil.random.nextInt());
+                final FieldNode field4 = new FieldNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), "I", null, RandomUtil.random.nextInt());
+                classNode.fields.add(field3);
+                classNode.fields.add(field4);
+                list.add(new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, field3.name, field3.desc));
+                list.add(new FieldInsnNode(Opcodes.GETSTATIC, classNode.name, field4.name, field4.desc));
+
+                int opcode = field3.value == field4.value ? Opcodes.IF_ICMPEQ : Opcodes.IF_ICMPNE;
+                list.add(new JumpInsnNode(opcode, labelNode));
             }
         }
         return list;
