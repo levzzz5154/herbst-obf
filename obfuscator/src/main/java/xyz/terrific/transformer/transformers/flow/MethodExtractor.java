@@ -1,6 +1,5 @@
 package xyz.terrific.transformer.transformers.flow;
 
-import org.objectweb.asm.Handle;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
@@ -10,6 +9,8 @@ import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.RandomUtil;
 
 import java.util.ArrayList;
+
+import static xyz.terrific.util.asm.InsnUtil.*;
 
 @Group(name = "flow")
 public class MethodExtractor extends Transformer {
@@ -26,11 +27,44 @@ public class MethodExtractor extends Transformer {
                         case LdcInsnNode ldcInsnNode -> {
                             extractLdcInsn(classNode, method, ldcInsnNode);
                         }
-                        default -> {}
+                        case InsnNode operatorInsn
+                                && ((operatorInsn.getOpcode() >= Opcodes.IADD && operatorInsn.getOpcode() <= Opcodes.DREM)
+                                || (operatorInsn.getOpcode() >= Opcodes.ISHL && operatorInsn.getOpcode() <= Opcodes.LXOR)) -> {
+                            extractOperatorInsn(classNode, method, operatorInsn);
+                        }
+                        default -> {
+                        }
                     }
                 });
             }
         });
+    }
+
+    public static void extractOperatorInsn(ClassNode classNode, MethodNode methodNode, InsnNode operatorInsn) {
+        final var opInsnDesc = getOperatorInsnDesc(operatorInsn);
+        if (opInsnDesc.isEmpty()) return;
+        final var exMethodDesc = "(" + opInsnDesc.repeat(2) + ")" + opInsnDesc;
+        final var exMethod = new MethodNode(Opcodes.ACC_STATIC, RandomUtil.randomString(), exMethodDesc, null, null);
+
+        final var splitDesc = exMethod.desc.split("\\)");
+        final var returnInsn = getReturnInsn(splitDesc[1]);
+
+        final var startLabel = new LabelNode(new Label());
+        final var endLabel = new LabelNode(new Label());
+        final var secondIndex = (opInsnDesc.equals("J") || opInsnDesc.equals("D")) ? 2 : 1;
+
+        /*exMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), leReturnDesc, null, startLabel, endLabel, 0));
+        exMethod.localVariables.add(new LocalVariableNode(RandomUtil.randomString(), leReturnDesc, null, startLabel, endLabel, 1));*/
+
+        exMethod.instructions.add(startLabel);
+        exMethod.instructions.add(getVarInsn(opInsnDesc, 0));
+        exMethod.instructions.add(getVarInsn(opInsnDesc, secondIndex));
+        exMethod.instructions.add(operatorInsn.clone(null));
+        exMethod.instructions.add(returnInsn);
+        exMethod.instructions.add(endLabel);
+        classNode.methods.add(exMethod);
+        methodNode.instructions.insert(operatorInsn, new MethodInsnNode(Opcodes.INVOKESTATIC, classNode.name, exMethod.name, exMethod.desc));
+        methodNode.instructions.remove(operatorInsn);
     }
     public static void extractLdcInsn(ClassNode classNode, MethodNode methodNode, LdcInsnNode ldcInsn) {
         final var leReturnDesc = getLdcDesc(ldcInsn);
@@ -49,17 +83,6 @@ public class MethodExtractor extends Transformer {
         classNode.methods.add(exMethod);
         methodNode.instructions.insert(ldcInsn, new MethodInsnNode(Opcodes.INVOKESTATIC, classNode.name, exMethod.name, exMethod.desc));
         methodNode.instructions.remove(ldcInsn);
-    }
-    public static String getLdcDesc(LdcInsnNode ldcInsn) {
-        return switch (ldcInsn.cst) {
-            case String ignored -> "Ljava/lang/String;";
-            case Integer ignored -> "I";
-            case Float ignored -> "F";
-            case Long ignored -> "J";
-            case Double ignored -> "D";
-            case Class ignored -> "Ljava/lang/Class;";
-            case Object ignored -> "Ljava/lang/Object;";
-        };
     }
     public static void extractMethodInsn(ClassNode classNode, MethodNode methodNode, AbstractInsnNode insnNode) {
         if (!(insnNode instanceof MethodInsnNode methodInsn)) return;
@@ -87,78 +110,8 @@ public class MethodExtractor extends Transformer {
         methodNode.instructions.insert(insnNode, new MethodInsnNode(Opcodes.INVOKESTATIC, classNode.name, exMethod.name, exMethod.desc));
         methodNode.instructions.remove(insnNode);
     }
-
-    public static ArrayList<LocalVariableNode> parseDescToLocals(char[] charArray, LabelNode startLabel, LabelNode endLabel) {
-        int startIndex = 0;
-        StringBuilder localVarDesc = new StringBuilder();
-        final var localVars = new ArrayList<LocalVariableNode>();
-        var nowParsing = ParsingType.NOTHING;
-
-        for (char c : charArray) {
-            switch (nowParsing) {
-                case NOTHING -> {
-                    if (c == 'L') {
-                        nowParsing = ParsingType.OBJECT;
-                        localVarDesc.append(c);
-                    } else if (c == '[') {
-                        nowParsing = ParsingType.ARRAY;
-                        localVarDesc.append(c);
-                    } else {
-                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), String.valueOf(c), null, startLabel, endLabel, startIndex));
-                        startIndex++;
-                    }
-                }
-                case OBJECT -> {
-                    localVarDesc.append(c);
-                    if (c == ';') {
-                        nowParsing = ParsingType.NOTHING;
-                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), localVarDesc.toString(), null, startLabel, endLabel, startIndex));
-                        localVarDesc = new StringBuilder();
-                        startIndex++;
-                    }
-                }
-                case ARRAY -> {
-                    localVarDesc.append(c);
-                    if (c == 'L') {
-                        nowParsing = ParsingType.OBJECT;
-                    } else if (c != '[') {
-                        nowParsing = ParsingType.NOTHING;
-                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), localVarDesc.toString(), null, startLabel, endLabel, startIndex));
-                        localVarDesc = new StringBuilder();
-                        startIndex++;
-                    }
-                }
-            }
-        }
-        return localVars;
-    }
-    public static VarInsnNode getVarInsn(String desc, int varIndex) {
-        return switch (desc) {
-            case "Z", "B", "C", "S", "I" -> new VarInsnNode(Opcodes.ILOAD, varIndex);
-            case "J" -> new VarInsnNode(Opcodes.LLOAD, varIndex);
-            case "F" -> new VarInsnNode(Opcodes.FLOAD, varIndex);
-            case "D" -> new VarInsnNode(Opcodes.DLOAD, varIndex);
-            default -> new VarInsnNode(Opcodes.ALOAD, varIndex);
-        };
-    }
-    public static InsnNode getReturnInsn(String desc) {
-        return switch (desc) {
-            case "Z", "B", "C", "S", "I" -> new InsnNode(Opcodes.IRETURN);
-            case "J" -> new InsnNode(Opcodes.LRETURN);
-            case "F" -> new InsnNode(Opcodes.FRETURN);
-            case "D" -> new InsnNode(Opcodes.DRETURN);
-            case "V" -> new InsnNode(Opcodes.RETURN);
-            default -> new InsnNode(Opcodes.ARETURN);
-        };
-    }
-
     @Override
     public boolean parseConfig(ConfigManager.Configs<String, Object> config) {
         return config.safeGet("extractMethods", false);
     }
 }
-enum ParsingType {
-    NOTHING,
-    OBJECT,
-    ARRAY
-};

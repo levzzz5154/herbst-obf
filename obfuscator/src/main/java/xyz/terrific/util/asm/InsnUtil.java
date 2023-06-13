@@ -67,4 +67,101 @@ public class InsnUtil {
         }
         return list;
     }
+    public static ArrayList<LocalVariableNode> parseDescToLocals(char[] charArray, LabelNode startLabel, LabelNode endLabel) {
+        int startIndex = 0;
+        StringBuilder localVarDesc = new StringBuilder();
+        final var localVars = new ArrayList<LocalVariableNode>();
+        var nowParsing = ParsingType.NOTHING;
+
+        for (char c : charArray) {
+            switch (nowParsing) {
+                case NOTHING -> {
+                    if (c == 'L') {
+                        nowParsing = ParsingType.OBJECT;
+                        localVarDesc.append(c);
+                    } else if (c == '[') {
+                        nowParsing = ParsingType.ARRAY;
+                        localVarDesc.append(c);
+                    } else {
+                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), String.valueOf(c), null, startLabel, endLabel, startIndex));
+                        startIndex++;
+                    }
+                }
+                case OBJECT -> {
+                    localVarDesc.append(c);
+                    if (c == ';') {
+                        nowParsing = ParsingType.NOTHING;
+                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), localVarDesc.toString(), null, startLabel, endLabel, startIndex));
+                        localVarDesc = new StringBuilder();
+                        startIndex++;
+                    }
+                }
+                case ARRAY -> {
+                    localVarDesc.append(c);
+                    if (c == 'L') {
+                        nowParsing = ParsingType.OBJECT;
+                    } else if (c != '[') {
+                        nowParsing = ParsingType.NOTHING;
+                        localVars.add(new LocalVariableNode(RandomUtil.randomString(), localVarDesc.toString(), null, startLabel, endLabel, startIndex));
+                        localVarDesc = new StringBuilder();
+                        startIndex++;
+                    }
+                }
+            }
+        }
+        return localVars;
+    }
+    enum ParsingType {
+        NOTHING,
+        OBJECT,
+        ARRAY
+    }
+    public static VarInsnNode getVarInsn(String desc, int varIndex) {
+        return switch (desc) {
+            case "Z", "B", "C", "S", "I" -> new VarInsnNode(Opcodes.ILOAD, varIndex);
+            case "J" -> new VarInsnNode(Opcodes.LLOAD, varIndex);
+            case "F" -> new VarInsnNode(Opcodes.FLOAD, varIndex);
+            case "D" -> new VarInsnNode(Opcodes.DLOAD, varIndex);
+            default -> new VarInsnNode(Opcodes.ALOAD, varIndex);
+        };
+    }
+    public static InsnNode getReturnInsn(String desc) {
+        return switch (desc) {
+            case "Z", "B", "C", "S", "I" -> new InsnNode(Opcodes.IRETURN);
+            case "J" -> new InsnNode(Opcodes.LRETURN);
+            case "F" -> new InsnNode(Opcodes.FRETURN);
+            case "D" -> new InsnNode(Opcodes.DRETURN);
+            case "V" -> new InsnNode(Opcodes.RETURN);
+            default -> new InsnNode(Opcodes.ARETURN);
+        };
+    }
+    public static String getLdcDesc(LdcInsnNode ldcInsn) {
+        return switch (ldcInsn.cst) {
+            case String ignored -> "Ljava/lang/String;";
+            case Integer ignored -> "I";
+            case Float ignored -> "F";
+            case Long ignored -> "J";
+            case Double ignored -> "D";
+            case Class ignored -> "Ljava/lang/Class;";
+            case Object ignored -> "Ljava/lang/Object;";
+        };
+    }
+    public static String getOperatorInsnDesc(InsnNode operatorInsn) {
+        var desc = "";
+        var op = operatorInsn.getOpcode();
+        if (op >= Opcodes.IADD && op <= Opcodes.DREM) {
+            switch (op % 4) {
+                case 0 -> desc = "I";
+                case 1 -> desc = "J";
+                case 2 -> desc = "F";
+                case 3 -> desc = "D";
+            }
+        } else if (op >= Opcodes.ISHL && op <= Opcodes.LXOR) {
+            switch (op % 2) {
+                case 0 -> desc = "I";
+                case 1 -> desc = "J";
+            }
+        }
+        return desc;
+    }
 }

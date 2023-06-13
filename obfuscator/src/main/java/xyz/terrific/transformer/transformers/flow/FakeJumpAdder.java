@@ -31,7 +31,8 @@ public class FakeJumpAdder extends Transformer {
                                 labels.add(labelNode);
                             }
                         });
-                        labels.remove(labels.size() - 1); // Remove the last label because it's after the RETURN insn
+                        if (!labels.isEmpty())
+                            labels.remove(labels.size() - 1); // Remove the last label because it's after the RETURN insn
 
                         if (!labels.isEmpty()) {
                             methodNode.instructions.forEach(abstractInsnNode -> {
