@@ -20,7 +20,7 @@ transformers:
 
   renamers:
 #    dictionary: "\\/_üöäÜÖÄ"
-    length:  24
+    length:  12
     classes: false  # Rename classes
     fields:  false  # Rename fields
     methods: false # Rename methods
@@ -33,9 +33,16 @@ transformers:
 #
   string: # More options?
     enabled: true
-    convertToCharArray: false
+    convertToCharArray: true
     complexity: 2 # 1-5
-#
+
+  extractor:
+    enabled: true
+    chance: 100 # 0-100
+    extractMethodCalls: true
+    extractLdcInsns: true
+    extractOpInsns: true
+
   flow:
     enabled: true
 
@@ -51,10 +58,10 @@ transformers:
     extractFieldValues: true # extracts values of static fields into a static block
     addNativeAnnotation: false # adds an annotation for later native obfuscation TODO: implement
     encryptNumbers: true # encrypts numbers
-    replaceGotos: true # replaces goto's with random real jumps
+    replaceGotos: true # replaces gotos with random real jumps
 
-    extractMethods: true # randomly extracts instructions into method calls
-    extractMethodChance: 30 # chance of extracting (0-100)
+#    extractMethods: true # randomly extracts instructions into method calls
+#    extractMethodChance: 30 # chance of extracting (0-100)
 #    layers: 5 # 1-20, bigger the number the slower to obfuscate
 #
 #  minecraft:

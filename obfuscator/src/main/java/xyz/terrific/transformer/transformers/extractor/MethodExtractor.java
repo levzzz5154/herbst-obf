@@ -1,4 +1,4 @@
-package xyz.terrific.transformer.transformers.flow;
+package xyz.terrific.transformer.transformers.extractor;
 
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
@@ -8,36 +8,46 @@ import xyz.terrific.transformer.Transformer;
 import xyz.terrific.transformer.annotation.Group;
 import xyz.terrific.util.RandomUtil;
 
-import java.util.ArrayList;
-
 import static xyz.terrific.util.asm.InsnUtil.*;
 
-@Group(name = "flow")
+@Group(name = "extractor")
 public class MethodExtractor extends Transformer {
+    boolean extractMethodCalls = false;
+    boolean extractLdcInsns = false;
+    boolean extractOpInsns = false;
+    int chance = 100;
+
     @Override
     public void transform() {
         classes.stream().filter(c -> !isExcluded(c.name)).forEach(classNode -> {
             var methods = classNode.methods.toArray(new MethodNode[0]);
             for (MethodNode method : methods) {
                 method.instructions.forEach(insnNode -> {
-                    switch (insnNode) {
-                        case MethodInsnNode methodInsnNode -> {
-                            extractMethodInsn(classNode, method, insnNode);
-                        }
-                        case LdcInsnNode ldcInsnNode -> {
-                            extractLdcInsn(classNode, method, ldcInsnNode);
-                        }
-                        case InsnNode operatorInsn
-                                && ((operatorInsn.getOpcode() >= Opcodes.IADD && operatorInsn.getOpcode() <= Opcodes.DREM)
-                                || (operatorInsn.getOpcode() >= Opcodes.ISHL && operatorInsn.getOpcode() <= Opcodes.LXOR)) -> {
-                            extractOperatorInsn(classNode, method, operatorInsn);
-                        }
-                        default -> {
-                        }
-                    }
+                    extractAbstractInsn(classNode, method, insnNode);
                 });
             }
         });
+    }
+
+    private void extractAbstractInsn(ClassNode classNode, MethodNode method, AbstractInsnNode insnNode) {
+        if (RandomUtil.random.nextInt(1, 101) > chance) {
+            return;
+        }
+        switch (insnNode) {
+            case MethodInsnNode methodInsnNode && extractMethodCalls -> {
+                extractMethodInsn(classNode, method, insnNode);
+            }
+            case LdcInsnNode ldcInsnNode && extractLdcInsns -> {
+                extractLdcInsn(classNode, method, ldcInsnNode);
+            }
+            case InsnNode operatorInsn && extractOpInsns
+                    && ((operatorInsn.getOpcode() >= Opcodes.IADD && operatorInsn.getOpcode() <= Opcodes.DREM)
+                    || (operatorInsn.getOpcode() >= Opcodes.ISHL && operatorInsn.getOpcode() <= Opcodes.LXOR)) -> {
+                extractOperatorInsn(classNode, method, operatorInsn);
+            }
+            default -> {
+            }
+        }
     }
 
     public static void extractOperatorInsn(ClassNode classNode, MethodNode methodNode, InsnNode operatorInsn) {
@@ -112,6 +122,10 @@ public class MethodExtractor extends Transformer {
     }
     @Override
     public boolean parseConfig(ConfigManager.Configs<String, Object> config) {
-        return config.safeGet("extractMethods", false);
+        this.extractMethodCalls = config.safeGet("extractMethodCalls", false);
+        this.extractLdcInsns = config.safeGet("extractLdcInsns", false);
+        this.extractOpInsns = config.safeGet("extractOpInsns", false);
+        this.chance = config.safeGet("chance", 100);
+        return true;
     }
 }

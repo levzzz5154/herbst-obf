@@ -142,8 +142,8 @@ public class InsnUtil {
             case Float ignored -> "F";
             case Long ignored -> "J";
             case Double ignored -> "D";
-            case Class ignored -> "Ljava/lang/Class;";
-            case Object ignored -> "Ljava/lang/Object;";
+            case Class<?> ignored -> "Ljava/lang/Class;";
+            case Object ignored -> "I"; // TODO: figure out if this is divine intellect? or just a dirty hack?
         };
     }
     public static String getOperatorInsnDesc(InsnNode operatorInsn) {
