@@ -33,11 +33,11 @@ transformers:
 #
   string: # More options?
     enabled: true
-    convertToCharArray: true
+    convertToCharArray: false
     complexity: 2 # 1-5
 
   extractor:
-    enabled: true
+    enabled: false
     chance: 100 # 0-100
     extractMethodCalls: true
     extractLdcInsns: true
@@ -52,7 +52,7 @@ transformers:
     blockSizeMin: 8
     blockSizeMax: 10
 
-    addFakeJumps: false # randomly adds fake jumps everywhere
+    addFakeJumps: true # randomly adds fake jumps everywhere
     fakeJumpChancePercent: 5
 
     extractFieldValues: true # extracts values of static fields into a static block
