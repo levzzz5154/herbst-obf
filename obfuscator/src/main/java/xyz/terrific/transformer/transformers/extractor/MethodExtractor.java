@@ -34,13 +34,13 @@ public class MethodExtractor extends Transformer {
             return;
         }
         switch (insnNode) {
-            case MethodInsnNode methodInsnNode && extractMethodCalls -> {
+            case MethodInsnNode methodInsnNode when extractMethodCalls -> {
                 extractMethodInsn(classNode, method, insnNode);
             }
-            case LdcInsnNode ldcInsnNode && extractLdcInsns -> {
+            case LdcInsnNode ldcInsnNode when extractLdcInsns -> {
                 extractLdcInsn(classNode, method, ldcInsnNode);
             }
-            case InsnNode operatorInsn && extractOpInsns
+            case InsnNode operatorInsn when extractOpInsns
                     && ((operatorInsn.getOpcode() >= Opcodes.IADD && operatorInsn.getOpcode() <= Opcodes.DREM)
                     || (operatorInsn.getOpcode() >= Opcodes.ISHL && operatorInsn.getOpcode() <= Opcodes.LXOR)) -> {
                 extractOperatorInsn(classNode, method, operatorInsn);

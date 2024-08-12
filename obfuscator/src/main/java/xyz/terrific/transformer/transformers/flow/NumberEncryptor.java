@@ -33,7 +33,7 @@ public class NumberEncryptor extends Transformer {
     private static InsnList obfNumberConstant(final AbstractInsnNode insnNode) {
         final var insnList = new InsnList();
         switch (insnNode) {
-            case LdcInsnNode ldcInsn && ldcInsn.cst instanceof Integer -> {
+            case LdcInsnNode ldcInsn when ldcInsn.cst instanceof Integer -> {
                 final var key = RandomUtil.random.nextInt();
                 var encryptedValue = ((int) ldcInsn.cst) ^ key;
 
@@ -47,14 +47,14 @@ public class NumberEncryptor extends Transformer {
                 insnList.add(new LdcInsnNode(key));
                 insnList.add(new InsnNode(Opcodes.IXOR));
             }
-            case LdcInsnNode ldcInsn && ldcInsn.cst instanceof Long -> {
+            case LdcInsnNode ldcInsn when ldcInsn.cst instanceof Long -> {
                 final var key = RandomUtil.random.nextLong();
                 final var encryptedValue = ((long) ldcInsn.cst) ^ key;
                 insnList.add(new LdcInsnNode(key));
                 insnList.add(new LdcInsnNode(encryptedValue));
                 insnList.add(new InsnNode(Opcodes.LXOR));
             }
-            case LdcInsnNode ldcInsn && ldcInsn.cst instanceof Float -> {
+            case LdcInsnNode ldcInsn when ldcInsn.cst instanceof Float -> {
                 final var key = RandomUtil.random.nextInt();
                 final var value = (float)ldcInsn.cst;
                 insnList.add(new LdcInsnNode(Float.floatToRawIntBits(value) ^ key));
@@ -62,7 +62,7 @@ public class NumberEncryptor extends Transformer {
                 insnList.add(new InsnNode(Opcodes.IXOR));
                 insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Float", "intBitsToFloat", "(I)F", false));
             }
-            case LdcInsnNode ldcInsn && ldcInsn.cst instanceof Double -> {
+            case LdcInsnNode ldcInsn when ldcInsn.cst instanceof Double -> {
                 final var key = RandomUtil.random.nextLong();
                 final var value = (double)ldcInsn.cst;
 
@@ -71,7 +71,7 @@ public class NumberEncryptor extends Transformer {
                 insnList.add(new InsnNode(Opcodes.LXOR));
                 insnList.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "java/lang/Double", "longBitsToDouble", "(J)D", false));
             }
-            case IntInsnNode intInsn && (intInsn.getOpcode() == Opcodes.SIPUSH || intInsn.getOpcode() == Opcodes.BIPUSH) -> {
+            case IntInsnNode intInsn when (intInsn.getOpcode() == Opcodes.SIPUSH || intInsn.getOpcode() == Opcodes.BIPUSH) -> {
                 final var key = RandomUtil.random.nextInt();
                 final var value = intInsn.operand;
 
